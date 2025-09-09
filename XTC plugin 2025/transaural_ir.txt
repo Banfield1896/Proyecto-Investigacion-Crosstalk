@@ -1,0 +1,90 @@
+function [cLL,cRL, cLR, cRR, t, dt, C2, H2] = transaural_ir(D,dp,do,beta,nSamplesIR,fs)
+% [cLL,cRL, cLR, cRR, t, dt] = transaural_ir(D,dp,do,beta,nSamplesIR,fs);
+% %% corregido todos los cii son ahora vectores columna
+% Calcula las respuestas al impulso de cancelación de crosstalk
+% La c minúscula se utiliza aquí para funciones del tiempo
+% La C mayúscula para funciones de la frecuencia
+% D es la distancia del plano de altavoces al plano oídos
+% dp es la distancia entre altavoces
+% do es la distancia entre oídos
+% beta es el coeficiente de regulación
+% nSamplesIR es la cant de muestras de las rtas al impulso
+% fs es la frecuencia de muestreo
+% C es la matriz de cancelación de crosstalk
+% --- Caso simétrico sin reflexiones en la cabeza
+
+c=345;
+if mod(nSamplesIR,2)==1 
+    disp('Warning! nSamplesIR is expected to be an even number');
+    disp('It was automatically fix adding one to the value proposed.')
+    nSamplesIR=nSamplesIR+1;
+end
+f=(0:nSamplesIR-1)/nSamplesIR*fs;
+dLL = sqrt(D^2+(dp/2-do/2)^2); % caso simétrico ipsilateral
+dLR = sqrt(D^2+(dp/2+do/2)^2); % caso simétrico contralateral
+% dRR=dLL; dRL=dLR;
+tLL=dLL/c;tLR=dLR/c; 
+%tRL=dRL/c;tRR=dRR/c;
+
+% Cálculo de las matrices (transferencia)
+C=zeros(2,2,nSamplesIR/2); k=zeros(1,nSamplesIR/2); % Matriz C regularizada y k condición de número
+H=zeros(2,2,nSamplesIR/2);
+
+for naux = 1:nSamplesIR/2
+    w=2*pi*f(naux);
+    Haux0=[exp(-1i*w*tLL)/dLL,        exp(-1i*w*tLR)/dLR; ...
+        exp(-1i*w*tLR)/dLR,          exp(-1i*w*tLL)/dLL];
+    C(:,:,naux)=inv((Haux0'*Haux0+beta*eye(2)))*Haux0';
+    H(:,:,naux)=Haux0;
+end
+
+CLL=[squeeze(C(1,1,:)); 0; conj(squeeze(C(1,1,end:-1:2)))];
+CLR=[squeeze(C(2,1,:)); 0; conj(squeeze(C(2,1,end:-1:2)))];
+CRR=CLL; CRL=CLR; % Por simetría
+HLL=[squeeze(H(1,1,:)); 0; conj(squeeze(H(1,1,end:-1:2)))];
+HLR=[squeeze(H(2,1,:)); 0; conj(squeeze(H(2,1,end:-1:2)))];
+HRR=HLL; HRL=HLR; % Por simetría
+
+C2(1,1,:)=CLL; C2(1,2,:)=CLR; C2(2,1,:)=CRL; C2(2,2,:)=CRR;
+H2(1,1,:)=HLL; H2(1,2,:)=HLR; H2(2,1,:)=HRL; H2(2,2,:)=HRR;
+
+cLL=(ifft(CLL)); %rta Impulso imagen L en altavoz L
+cRR=cLL; %rta Impulso imagen R en altavoz R
+cLR=(ifft(CLR)); %rta Impulso imagen L en altavoz R
+cRL=cLR; %rta Impulso imagen R en altavoz L
+% Los espectros bien construidos dan resultados de c minúscula reales
+dt=1/fs;
+t=0:dt:(length(CLL)-1)*dt;
+%f=(0:length(t)-1)/length(t)*fs;
+%tdelay=0.02; % delay de 20 ms ¿será necesario algún delay?
+tdelay=0.01; % delay de 10 ms
+ntdelay=find(t>=tdelay,1);
+cLL=circshift(cLL,ntdelay);
+cLR=circshift(cLR,ntdelay);
+cRR=cLL; cRL=cLR;
+%sL=audioBinaural(:,1);
+%sR=audioBinaural(:,2);
+%yL=(conv(sL,cLL)+conv(sR,cRL));
+%yR=(conv(sL,cLR)+conv(sR,cRR));
+%audioXTC=[yL,yR];
+
+% Tal como está planteada la matriz Haux0 no tiene sentido diferenciar
+% entre dLL y dRR, o entre dLR y dRL. Sin embargo resulta más prolijo si
+% vuelvo a analizar el proceso para que esté correctamente planteado cuál
+% es cual.
+
+% --- Guardar la respuesta al impulso como archivo WAV ---
+% Combino cLL y cLR en una señal estéreo
+irStereo = [real(cLL(:)), real(cLR(:))]; % Aseguro que sean reales y vectores columna
+
+% Normalizo para evitar clipping
+maxVal = max(abs(irStereo), [], 'all');
+if maxVal > 1
+    irStereo = irStereo / maxVal;
+end
+
+% Escribo el archivo WAV
+audiowrite('respuestaImpulsoXTC.wav', irStereo, fs);
+disp('Archivo respuestaImpulsoXTC.wav guardado correctamente.');
+end
+

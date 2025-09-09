@@ -1,0 +1,27 @@
+# Archivos de compilación de Qt/CMake
+build/
+CMakeLists.txt.user*
+*.o
+*.exe
+
+# Archivos de Office
+*.docx
+
+# Archivos generados por Visual Studio / IDEs de C++
+.vs/                   # Carpeta principal de configuraciones de VS
+*.VC.db                # Bases de datos de VS (como Browse.VC.db)
+*.ipch                 # Archivos de precompilación/IntelliSense
+*.obj                  # Archivos objeto
+*.ilk                  # Archivos incrementales del enlazador
+*.pdb                  # Bases de datos de depuración
+*.lib                  # Librerías (si son generadas localmente, no de terceros)
+*.exp                  # Archivos de exportación
+*.aps                  # Archivos de recursos
+*.pch                  # Headers precompilados
+*.suo                  # Soluciones de usuario de Visual Studio
+*.user                 # Archivos de usuario de Visual Studio
+*_UpgradeReport.htm    # Reportes de actualización de VS
+Bin/                   # Carpeta de binarios generados (exe, dll)
+x64/                   # Carpeta común para builds de 64-bit
+Debug/                 # Carpeta común para builds de Debug
+Release/               # Carpeta común para builds de Release
