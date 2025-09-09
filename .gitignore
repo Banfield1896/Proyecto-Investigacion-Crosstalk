@@ -1,5 +1,7 @@
 # Archivos de compilación de Qt/CMake
+Builds/
 build/
+
 CMakeLists.txt.user*
 *.o
 *.exe
@@ -8,9 +10,9 @@ CMakeLists.txt.user*
 *.docx
 
 # Archivos generados por Visual Studio / IDEs de C++
-.vs/                   # Carpeta principal de configuraciones de VS
+**/.vs/                   # Carpeta principal de configuraciones de VS
 *.VC.db                # Bases de datos de VS (como Browse.VC.db)
-*.ipch                 # Archivos de precompilación/IntelliSense
+**/*.ipch                 # Archivos de precompilación/IntelliSense
 *.obj                  # Archivos objeto
 *.ilk                  # Archivos incrementales del enlazador
 *.pdb                  # Bases de datos de depuración
