@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
+XTCplugin2025CAudioProcessorEditor::XTCplugin2025CAudioProcessorEditor (XTCplugin2025CAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -18,12 +18,12 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     setSize (400, 300);
 }
 
-NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
+XTCplugin2025CAudioProcessorEditor::~XTCplugin2025CAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
+void XTCplugin2025CAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
@@ -33,7 +33,7 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
-void NewProjectAudioProcessorEditor::resized()
+void XTCplugin2025CAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
