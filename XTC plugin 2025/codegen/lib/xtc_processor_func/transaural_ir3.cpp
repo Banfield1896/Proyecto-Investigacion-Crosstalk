@@ -1,264 +1,557 @@
 //
-// File: transaural_ir3.cpp
+// transaural_ir3.cpp
 //
-// MATLAB Coder version            : 3.4
-// C/C++ source code generated on  : 07-Sep-2025 14:36:14
+// Code generation for function 'transaural_ir3'
 //
 
-// Include Files
-#include "rt_nonfinite.h"
-#include "xtc_processor_func.h"
+// Include files
 #include "transaural_ir3.h"
 #include "circshift.h"
 #include "ifft.h"
-#include "squeeze.h"
-#include "inv.h"
-#include "exp.h"
-#include "sqrt.h"
-
-// Function Declarations
-static double rt_roundd_snf(double u);
+#include <cmath>
 
 // Function Definitions
-
-//
-// Arguments    : double u
-// Return Type  : double
-//
-static double rt_roundd_snf(double u)
-{
-  double y;
-  if (std::abs(u) < 4.503599627370496E+15) {
-    if (u >= 0.5) {
-      y = std::floor(u + 0.5);
-    } else if (u > -0.5) {
-      y = u * 0.0;
-    } else {
-      y = std::ceil(u - 0.5);
-    }
-  } else {
-    y = u;
-  }
-
-  return y;
-}
-
-//
-// Versi髇 corregida y optimizada para la generaci髇 de c骴igo C++.
-//  - Pre-asigna memoria para todas las matrices.
-//  - Devuelve 鷑icamente las dos IRs necesarias (cLL y cLR).
-// Arguments    : double D
-//                double dp
-//                double b_do
-//                double beta
-//                double fs
-//                double cLL[8192]
-//                double cLR[8192]
-// Return Type  : void
-//
 void transaural_ir3(double D, double dp, double b_do, double beta, double fs,
                     double cLL[8192], double cLR[8192])
 {
-  int i;
-  double w;
-  double f[4096];
+  static creal_T b_C[16384];
+  static creal_T C[8192];
+  static const signed char b[4]{1, 0, 0, 1};
+  creal_T dcv[8192];
+  creal_T Haux0[4];
+  creal_T b_a[4];
+  creal_T x[4];
+  double a;
   double dLL;
   double dLR;
+  double ntdelay;
+  double r;
   double tLL;
   double tLR;
-  int naux;
-  creal_T dc0;
-  creal_T dc1;
-  static creal_T C[4096];
-  static creal_T dcv0[4096];
-  static creal_T b_C[16384];
-  creal_T dc2;
-  creal_T c_C[4095];
-  creal_T dcv1[4095];
-  creal_T dc3;
-  static creal_T dcv2[8192];
-  creal_T Haux0[4];
-  static creal_T dcv3[8192];
-  creal_T b_Haux0[4];
-  creal_T a[4];
-  int i1;
-  double im;
-  int i2;
-  static const signed char b[4] = { 1, 0, 0, 1 };
-
-  double Haux0_re;
-  double Haux0_im;
-
-  //  --- Pre-asignaci髇 de memoria ---
-  //  Esto le dice a MATLAB Coder el tama駉 exacto de las matrices de antemano.
+  int b_i;
+  int i;
+  //  Versi贸n corregida y optimizada para la generaci贸n de c贸digo C++.
+  //  - Pre-asigna memoria para todas las matrices.
+  //  - Devuelve 煤nicamente las dos IRs necesarias (cLL y cLR).
+  //  --- Pre-asignaci贸n de memoria ---
+  //  Esto le dice a MATLAB Coder el tama帽o exacto de las matrices de antemano.
   //  H no es necesario si no se devuelve H2.
   //  C2 y H2 tampoco son necesarios si no se devuelven.
-  for (i = 0; i < 4096; i++) {
-    f[i] = 0.0001220703125 * (double)i * fs;
-  }
-
-  w = dp / 2.0 - b_do / 2.0;
-  dLL = D * D + w * w;
-  b_sqrt(&dLL);
-  w = dp / 2.0 + b_do / 2.0;
-  dLR = D * D + w * w;
-  b_sqrt(&dLR);
+  a = dp / 2.0 - b_do / 2.0;
+  r = D * D;
+  dLL = std::sqrt(r + a * a);
+  a = dp / 2.0 + b_do / 2.0;
+  dLR = std::sqrt(r + a * a);
   tLL = dLL / 345.0;
   tLR = dLR / 345.0;
-
-  //  C醠culo de la matriz de transferencia en frecuencia
-  for (naux = 0; naux < 4096; naux++) {
-    w = 6.2831853071795862 * f[naux];
-    dc0.re = tLL * (w * 0.0);
-    dc0.im = tLL * -w;
-    b_exp(&dc0);
-    dc1.re = tLR * (w * 0.0);
-    dc1.im = tLR * -w;
-    b_exp(&dc1);
-    dc2.re = tLR * (w * 0.0);
-    dc2.im = tLR * -w;
-    b_exp(&dc2);
-    dc3.re = tLL * (w * 0.0);
-    dc3.im = tLL * -w;
-    b_exp(&dc3);
-    if (dc0.im == 0.0) {
-      Haux0[0].re = dc0.re / dLL;
-      Haux0[0].im = 0.0;
-    } else if (dc0.re == 0.0) {
-      Haux0[0].re = 0.0;
-      Haux0[0].im = dc0.im / dLL;
-    } else {
-      Haux0[0].re = dc0.re / dLL;
-      Haux0[0].im = dc0.im / dLL;
-    }
-
-    if (dc1.im == 0.0) {
-      Haux0[2].re = dc1.re / dLR;
-      Haux0[2].im = 0.0;
-    } else if (dc1.re == 0.0) {
-      Haux0[2].re = 0.0;
-      Haux0[2].im = dc1.im / dLR;
-    } else {
-      Haux0[2].re = dc1.re / dLR;
-      Haux0[2].im = dc1.im / dLR;
-    }
-
-    if (dc2.im == 0.0) {
-      Haux0[1].re = dc2.re / dLR;
-      Haux0[1].im = 0.0;
-    } else if (dc2.re == 0.0) {
-      Haux0[1].re = 0.0;
-      Haux0[1].im = dc2.im / dLR;
-    } else {
-      Haux0[1].re = dc2.re / dLR;
-      Haux0[1].im = dc2.im / dLR;
-    }
-
-    if (dc3.im == 0.0) {
-      Haux0[3].re = dc3.re / dLL;
-      Haux0[3].im = 0.0;
-    } else if (dc3.re == 0.0) {
-      Haux0[3].re = 0.0;
-      Haux0[3].im = dc3.im / dLL;
-    } else {
-      Haux0[3].re = dc3.re / dLL;
-      Haux0[3].im = dc3.im / dLL;
-    }
-
-    for (i = 0; i < 2; i++) {
-      for (i1 = 0; i1 < 2; i1++) {
-        w = 0.0;
-        im = 0.0;
-        for (i2 = 0; i2 < 2; i2++) {
-          Haux0_re = Haux0[i2 + (i << 1)].re;
-          Haux0_im = -Haux0[i2 + (i << 1)].im;
-          w += Haux0_re * Haux0[i2 + (i1 << 1)].re - Haux0_im * Haux0[i2 + (i1 <<
-            1)].im;
-          im += Haux0_re * Haux0[i2 + (i1 << 1)].im + Haux0_im * Haux0[i2 + (i1 <<
-            1)].re;
-        }
-
-        b_Haux0[i + (i1 << 1)].re = w + beta * (double)b[i + (i1 << 1)];
-        b_Haux0[i + (i1 << 1)].im = im;
-        b_C[(i1 + (i << 1)) + (naux << 2)].re = 0.0;
-        b_C[(i1 + (i << 1)) + (naux << 2)].im = 0.0;
-      }
-    }
-
-    inv(b_Haux0, a);
-    for (i = 0; i < 2; i++) {
-      for (i1 = 0; i1 < 2; i1++) {
-        b_C[(i + (i1 << 1)) + (naux << 2)].re = 0.0;
-        b_C[(i + (i1 << 1)) + (naux << 2)].im = 0.0;
-        for (i2 = 0; i2 < 2; i2++) {
-          Haux0_re = Haux0[i1 + (i2 << 1)].re;
-          Haux0_im = -Haux0[i1 + (i2 << 1)].im;
-          b_C[(i + (i1 << 1)) + (naux << 2)].re += a[i + (i2 << 1)].re *
-            Haux0_re - a[i + (i2 << 1)].im * Haux0_im;
-          b_C[(i + (i1 << 1)) + (naux << 2)].im += a[i + (i2 << 1)].re *
-            Haux0_im + a[i + (i2 << 1)].im * Haux0_re;
-        }
-      }
-    }
-  }
-
-  //  Reconstrucci髇 del espectro completo con simetr韆 Hermitiana
+  //  C谩lculo de la matriz de transferencia en frecuencia
+  //  Reconstrucci贸n del espectro completo con simetr铆a Hermitiana
   //  Obtener la respuesta al impulso (real)
-  //  Aplicar un peque駉 retardo para hacer la respuesta causal
+  //  Aplicar un peque帽o retardo para hacer la respuesta causal
   //  10 ms delay
-  w = rt_roundd_snf(0.01 * fs);
+  ntdelay = std::round(0.01 * fs);
+  for (int naux{0}; naux < 4096; naux++) {
+    double Haux0_re_tmp;
+    double b_bim;
+    double b_brm;
+    double bim;
+    double brm;
+    double im;
+    double r_im;
+    double r_re;
+    double re;
+    double t_im;
+    double t_re;
+    a = 6.2831853071795862 * (0.0001220703125 * static_cast<double>(naux) * fs);
+    r_re = a * 0.0;
+    t_re = tLL * r_re;
+    t_im = tLL * -a;
+    if (t_im == 0.0) {
+      t_re = std::exp(t_re);
+      t_im = 0.0;
+    } else {
+      r = std::exp(t_re / 2.0);
+      t_re = r * (r * std::cos(t_im));
+      t_im = r * (r * std::sin(t_im));
+    }
+    r_re *= tLR;
+    r_im = tLR * -a;
+    if (r_im == 0.0) {
+      r_re = std::exp(r_re);
+      r_im = 0.0;
+    } else {
+      r = std::exp(r_re / 2.0);
+      r_re = r * (r * std::cos(r_im));
+      r_im = r * (r * std::sin(r_im));
+    }
+    if (r_im == 0.0) {
+      re = r_re / dLR;
+      im = 0.0;
+    } else if (r_re == 0.0) {
+      re = 0.0;
+      im = r_im / dLR;
+    } else {
+      re = r_re / dLR;
+      im = r_im / dLR;
+    }
+    if (t_im == 0.0) {
+      Haux0[0].re = t_re / dLL;
+      Haux0[0].im = 0.0;
+    } else if (t_re == 0.0) {
+      Haux0[0].re = 0.0;
+      Haux0[0].im = t_im / dLL;
+    } else {
+      Haux0[0].re = t_re / dLL;
+      Haux0[0].im = t_im / dLL;
+    }
+    Haux0[2].re = re;
+    Haux0[2].im = im;
+    Haux0[1].re = re;
+    Haux0[1].im = im;
+    if (t_im == 0.0) {
+      Haux0[3].re = t_re / dLL;
+      Haux0[3].im = 0.0;
+    } else if (t_re == 0.0) {
+      Haux0[3].re = 0.0;
+      Haux0[3].im = t_im / dLL;
+    } else {
+      Haux0[3].re = t_re / dLL;
+      Haux0[3].im = t_im / dLL;
+    }
+    for (i = 0; i < 2; i++) {
+      b_i = i << 1;
+      a = Haux0[b_i].re;
+      r = -Haux0[b_i].im;
+      Haux0_re_tmp = Haux0[b_i + 1].re;
+      t_im = -Haux0[b_i + 1].im;
+      x[i].re = ((a * Haux0[0].re - r * Haux0[0].im) +
+                 (Haux0_re_tmp * re - t_im * im)) +
+                beta * static_cast<double>(b[i]);
+      x[i].im =
+          (a * Haux0[0].im + r * Haux0[0].re) + (Haux0_re_tmp * im + t_im * re);
+      x[i + 2].re = ((a * re - r * im) +
+                     (Haux0_re_tmp * Haux0[3].re - t_im * Haux0[3].im)) +
+                    beta * static_cast<double>(b[i + 2]);
+      x[i + 2].im =
+          (a * im + r * re) + (Haux0_re_tmp * Haux0[3].im + t_im * Haux0[3].re);
+    }
+    brm = std::abs(x[0].re);
+    b_brm = std::abs(x[1].re);
+    bim = std::abs(x[0].im);
+    b_bim = std::abs(x[1].im);
+    if (b_brm + b_bim > brm + bim) {
+      if (x[1].im == 0.0) {
+        if (x[0].im == 0.0) {
+          r_re = x[0].re / x[1].re;
+          r_im = 0.0;
+        } else if (x[0].re == 0.0) {
+          r_re = 0.0;
+          r_im = x[0].im / x[1].re;
+        } else {
+          r_re = x[0].re / x[1].re;
+          r_im = x[0].im / x[1].re;
+        }
+      } else if (x[1].re == 0.0) {
+        if (x[0].re == 0.0) {
+          r_re = x[0].im / x[1].im;
+          r_im = 0.0;
+        } else if (x[0].im == 0.0) {
+          r_re = 0.0;
+          r_im = -(x[0].re / x[1].im);
+        } else {
+          r_re = x[0].im / x[1].im;
+          r_im = -(x[0].re / x[1].im);
+        }
+      } else if (b_brm > b_bim) {
+        Haux0_re_tmp = x[1].im / x[1].re;
+        a = x[1].re + Haux0_re_tmp * x[1].im;
+        r_re = (x[0].re + Haux0_re_tmp * x[0].im) / a;
+        r_im = (x[0].im - Haux0_re_tmp * x[0].re) / a;
+      } else if (b_bim == b_brm) {
+        if (x[1].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[1].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r_re = (x[0].re * Haux0_re_tmp + x[0].im * a) / b_brm;
+        r_im = (x[0].im * Haux0_re_tmp - x[0].re * a) / b_brm;
+      } else {
+        Haux0_re_tmp = x[1].re / x[1].im;
+        a = x[1].im + Haux0_re_tmp * x[1].re;
+        r_re = (Haux0_re_tmp * x[0].re + x[0].im) / a;
+        r_im = (Haux0_re_tmp * x[0].im - x[0].re) / a;
+      }
+      a = (r_re * x[3].re - r_im * x[3].im) - x[2].re;
+      r = (r_re * x[3].im + r_im * x[3].re) - x[2].im;
+      if (r == 0.0) {
+        t_re = 1.0 / a;
+        t_im = 0.0;
+      } else if (a == 0.0) {
+        t_re = 0.0;
+        t_im = -(1.0 / r);
+      } else {
+        brm = std::abs(a);
+        bim = std::abs(r);
+        if (brm > bim) {
+          Haux0_re_tmp = r / a;
+          a += Haux0_re_tmp * r;
+          t_re = (Haux0_re_tmp * 0.0 + 1.0) / a;
+          t_im = (0.0 - Haux0_re_tmp) / a;
+        } else if (bim == brm) {
+          if (a > 0.0) {
+            Haux0_re_tmp = 0.5;
+          } else {
+            Haux0_re_tmp = -0.5;
+          }
+          if (r > 0.0) {
+            a = 0.5;
+          } else {
+            a = -0.5;
+          }
+          t_re = (Haux0_re_tmp + 0.0 * a) / brm;
+          t_im = (0.0 * Haux0_re_tmp - a) / brm;
+        } else {
+          Haux0_re_tmp = a / r;
+          a = r + Haux0_re_tmp * a;
+          t_re = Haux0_re_tmp / a;
+          t_im = (Haux0_re_tmp * 0.0 - 1.0) / a;
+        }
+      }
+      if (x[1].im == 0.0) {
+        if (x[3].im == 0.0) {
+          r = x[3].re / x[1].re;
+          a = 0.0;
+        } else if (x[3].re == 0.0) {
+          r = 0.0;
+          a = x[3].im / x[1].re;
+        } else {
+          r = x[3].re / x[1].re;
+          a = x[3].im / x[1].re;
+        }
+      } else if (x[1].re == 0.0) {
+        if (x[3].re == 0.0) {
+          r = x[3].im / x[1].im;
+          a = 0.0;
+        } else if (x[3].im == 0.0) {
+          r = 0.0;
+          a = -(x[3].re / x[1].im);
+        } else {
+          r = x[3].im / x[1].im;
+          a = -(x[3].re / x[1].im);
+        }
+      } else if (b_brm > b_bim) {
+        Haux0_re_tmp = x[1].im / x[1].re;
+        a = x[1].re + Haux0_re_tmp * x[1].im;
+        r = (x[3].re + Haux0_re_tmp * x[3].im) / a;
+        a = (x[3].im - Haux0_re_tmp * x[3].re) / a;
+      } else if (b_bim == b_brm) {
+        if (x[1].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[1].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r = (x[3].re * Haux0_re_tmp + x[3].im * a) / b_brm;
+        a = (x[3].im * Haux0_re_tmp - x[3].re * a) / b_brm;
+      } else {
+        Haux0_re_tmp = x[1].re / x[1].im;
+        a = x[1].im + Haux0_re_tmp * x[1].re;
+        r = (Haux0_re_tmp * x[3].re + x[3].im) / a;
+        a = (Haux0_re_tmp * x[3].im - x[3].re) / a;
+      }
+      b_a[0].re = r * t_re - a * t_im;
+      b_a[0].im = r * t_im + a * t_re;
+      b_a[1].re = -t_re;
+      b_a[1].im = -t_im;
+      if (x[1].im == 0.0) {
+        if (-x[2].im == 0.0) {
+          r = -x[2].re / x[1].re;
+          a = 0.0;
+        } else if (-x[2].re == 0.0) {
+          r = 0.0;
+          a = -x[2].im / x[1].re;
+        } else {
+          r = -x[2].re / x[1].re;
+          a = -x[2].im / x[1].re;
+        }
+      } else if (x[1].re == 0.0) {
+        if (-x[2].re == 0.0) {
+          r = -x[2].im / x[1].im;
+          a = 0.0;
+        } else if (-x[2].im == 0.0) {
+          r = 0.0;
+          a = -(-x[2].re / x[1].im);
+        } else {
+          r = -x[2].im / x[1].im;
+          a = -(-x[2].re / x[1].im);
+        }
+      } else if (b_brm > b_bim) {
+        Haux0_re_tmp = x[1].im / x[1].re;
+        a = x[1].re + Haux0_re_tmp * x[1].im;
+        r = (-x[2].re + Haux0_re_tmp * -x[2].im) / a;
+        a = (-x[2].im - Haux0_re_tmp * -x[2].re) / a;
+      } else if (b_bim == b_brm) {
+        if (x[1].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[1].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r = (-x[2].re * Haux0_re_tmp + -x[2].im * a) / b_brm;
+        a = (-x[2].im * Haux0_re_tmp - -x[2].re * a) / b_brm;
+      } else {
+        Haux0_re_tmp = x[1].re / x[1].im;
+        a = x[1].im + Haux0_re_tmp * x[1].re;
+        r = (Haux0_re_tmp * -x[2].re + -x[2].im) / a;
+        a = (Haux0_re_tmp * -x[2].im - (-x[2].re)) / a;
+      }
+      b_a[2].re = r * t_re - a * t_im;
+      b_a[2].im = r * t_im + a * t_re;
+      b_a[3].re = r_re * t_re - r_im * t_im;
+      b_a[3].im = r_re * t_im + r_im * t_re;
+    } else {
+      if (x[0].im == 0.0) {
+        if (x[1].im == 0.0) {
+          r_re = x[1].re / x[0].re;
+          r_im = 0.0;
+        } else if (x[1].re == 0.0) {
+          r_re = 0.0;
+          r_im = x[1].im / x[0].re;
+        } else {
+          r_re = x[1].re / x[0].re;
+          r_im = x[1].im / x[0].re;
+        }
+      } else if (x[0].re == 0.0) {
+        if (x[1].re == 0.0) {
+          r_re = x[1].im / x[0].im;
+          r_im = 0.0;
+        } else if (x[1].im == 0.0) {
+          r_re = 0.0;
+          r_im = -(x[1].re / x[0].im);
+        } else {
+          r_re = x[1].im / x[0].im;
+          r_im = -(x[1].re / x[0].im);
+        }
+      } else if (brm > bim) {
+        Haux0_re_tmp = x[0].im / x[0].re;
+        a = x[0].re + Haux0_re_tmp * x[0].im;
+        r_re = (x[1].re + Haux0_re_tmp * x[1].im) / a;
+        r_im = (x[1].im - Haux0_re_tmp * x[1].re) / a;
+      } else if (bim == brm) {
+        if (x[0].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[0].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r_re = (x[1].re * Haux0_re_tmp + x[1].im * a) / brm;
+        r_im = (x[1].im * Haux0_re_tmp - x[1].re * a) / brm;
+      } else {
+        Haux0_re_tmp = x[0].re / x[0].im;
+        a = x[0].im + Haux0_re_tmp * x[0].re;
+        r_re = (Haux0_re_tmp * x[1].re + x[1].im) / a;
+        r_im = (Haux0_re_tmp * x[1].im - x[1].re) / a;
+      }
+      a = x[3].re - (r_re * x[2].re - r_im * x[2].im);
+      r = x[3].im - (r_re * x[2].im + r_im * x[2].re);
+      if (r == 0.0) {
+        t_re = 1.0 / a;
+        t_im = 0.0;
+      } else if (a == 0.0) {
+        t_re = 0.0;
+        t_im = -(1.0 / r);
+      } else {
+        b_brm = std::abs(a);
+        b_bim = std::abs(r);
+        if (b_brm > b_bim) {
+          Haux0_re_tmp = r / a;
+          a += Haux0_re_tmp * r;
+          t_re = (Haux0_re_tmp * 0.0 + 1.0) / a;
+          t_im = (0.0 - Haux0_re_tmp) / a;
+        } else if (b_bim == b_brm) {
+          if (a > 0.0) {
+            Haux0_re_tmp = 0.5;
+          } else {
+            Haux0_re_tmp = -0.5;
+          }
+          if (r > 0.0) {
+            a = 0.5;
+          } else {
+            a = -0.5;
+          }
+          t_re = (Haux0_re_tmp + 0.0 * a) / b_brm;
+          t_im = (0.0 * Haux0_re_tmp - a) / b_brm;
+        } else {
+          Haux0_re_tmp = a / r;
+          a = r + Haux0_re_tmp * a;
+          t_re = Haux0_re_tmp / a;
+          t_im = (Haux0_re_tmp * 0.0 - 1.0) / a;
+        }
+      }
+      if (x[0].im == 0.0) {
+        if (x[3].im == 0.0) {
+          r = x[3].re / x[0].re;
+          a = 0.0;
+        } else if (x[3].re == 0.0) {
+          r = 0.0;
+          a = x[3].im / x[0].re;
+        } else {
+          r = x[3].re / x[0].re;
+          a = x[3].im / x[0].re;
+        }
+      } else if (x[0].re == 0.0) {
+        if (x[3].re == 0.0) {
+          r = x[3].im / x[0].im;
+          a = 0.0;
+        } else if (x[3].im == 0.0) {
+          r = 0.0;
+          a = -(x[3].re / x[0].im);
+        } else {
+          r = x[3].im / x[0].im;
+          a = -(x[3].re / x[0].im);
+        }
+      } else if (brm > bim) {
+        Haux0_re_tmp = x[0].im / x[0].re;
+        a = x[0].re + Haux0_re_tmp * x[0].im;
+        r = (x[3].re + Haux0_re_tmp * x[3].im) / a;
+        a = (x[3].im - Haux0_re_tmp * x[3].re) / a;
+      } else if (bim == brm) {
+        if (x[0].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[0].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r = (x[3].re * Haux0_re_tmp + x[3].im * a) / brm;
+        a = (x[3].im * Haux0_re_tmp - x[3].re * a) / brm;
+      } else {
+        Haux0_re_tmp = x[0].re / x[0].im;
+        a = x[0].im + Haux0_re_tmp * x[0].re;
+        r = (Haux0_re_tmp * x[3].re + x[3].im) / a;
+        a = (Haux0_re_tmp * x[3].im - x[3].re) / a;
+      }
+      b_a[0].re = r * t_re - a * t_im;
+      b_a[0].im = r * t_im + a * t_re;
+      b_a[1].re = -r_re * t_re - -r_im * t_im;
+      b_a[1].im = -r_re * t_im + -r_im * t_re;
+      if (x[0].im == 0.0) {
+        if (-x[2].im == 0.0) {
+          r = -x[2].re / x[0].re;
+          a = 0.0;
+        } else if (-x[2].re == 0.0) {
+          r = 0.0;
+          a = -x[2].im / x[0].re;
+        } else {
+          r = -x[2].re / x[0].re;
+          a = -x[2].im / x[0].re;
+        }
+      } else if (x[0].re == 0.0) {
+        if (-x[2].re == 0.0) {
+          r = -x[2].im / x[0].im;
+          a = 0.0;
+        } else if (-x[2].im == 0.0) {
+          r = 0.0;
+          a = -(-x[2].re / x[0].im);
+        } else {
+          r = -x[2].im / x[0].im;
+          a = -(-x[2].re / x[0].im);
+        }
+      } else if (brm > bim) {
+        Haux0_re_tmp = x[0].im / x[0].re;
+        a = x[0].re + Haux0_re_tmp * x[0].im;
+        r = (-x[2].re + Haux0_re_tmp * -x[2].im) / a;
+        a = (-x[2].im - Haux0_re_tmp * -x[2].re) / a;
+      } else if (bim == brm) {
+        if (x[0].re > 0.0) {
+          Haux0_re_tmp = 0.5;
+        } else {
+          Haux0_re_tmp = -0.5;
+        }
+        if (x[0].im > 0.0) {
+          a = 0.5;
+        } else {
+          a = -0.5;
+        }
+        r = (-x[2].re * Haux0_re_tmp + -x[2].im * a) / brm;
+        a = (-x[2].im * Haux0_re_tmp - -x[2].re * a) / brm;
+      } else {
+        Haux0_re_tmp = x[0].re / x[0].im;
+        a = x[0].im + Haux0_re_tmp * x[0].re;
+        r = (Haux0_re_tmp * -x[2].re + -x[2].im) / a;
+        a = (Haux0_re_tmp * -x[2].im - (-x[2].re)) / a;
+      }
+      b_a[2].re = r * t_re - a * t_im;
+      b_a[2].im = r * t_im + a * t_re;
+      b_a[3].re = t_re;
+      b_a[3].im = t_im;
+    }
+    a = Haux0[0].re;
+    r = Haux0[0].im;
+    Haux0_re_tmp = Haux0[3].re;
+    t_im = Haux0[3].im;
+    for (i = 0; i < 2; i++) {
+      brm = b_a[i].re;
+      b_brm = b_a[i].im;
+      bim = b_a[i + 2].re;
+      b_bim = b_a[i + 2].im;
+      b_i = i + (naux << 2);
+      b_C[b_i].re = (brm * a - b_brm * -r) + (bim * re - b_bim * -im);
+      b_C[b_i].im = (brm * -r + b_brm * a) + (bim * -im + b_bim * re);
+      b_C[b_i + 2].re =
+          (brm * re - b_brm * -im) + (bim * Haux0_re_tmp - b_bim * -t_im);
+      b_C[b_i + 2].im =
+          (brm * -im + b_brm * re) + (bim * -t_im + b_bim * Haux0_re_tmp);
+    }
+    C[naux] = b_C[naux << 2];
+  }
+  C[4096].re = 0.0;
+  C[4096].im = 0.0;
+  for (i = 0; i < 4095; i++) {
+    b_i = (4095 - i) << 2;
+    C[i + 4097].re = b_C[b_i].re;
+    C[i + 4097].im = -b_C[b_i].im;
+  }
+  coder::ifft(C, dcv);
+  for (b_i = 0; b_i < 8192; b_i++) {
+    cLL[b_i] = dcv[b_i].re;
+  }
+  coder::circshift(cLL, ntdelay);
   for (i = 0; i < 4096; i++) {
-    C[i] = b_C[i << 2];
+    C[i] = b_C[(i << 2) + 1];
   }
-
-  squeeze(C, dcv0);
+  C[4096].re = 0.0;
+  C[4096].im = 0.0;
   for (i = 0; i < 4095; i++) {
-    c_C[i] = b_C[(4095 - i) << 2];
+    b_i = ((4095 - i) << 2) + 1;
+    C[i + 4097].re = b_C[b_i].re;
+    C[i + 4097].im = -b_C[b_i].im;
   }
-
-  b_squeeze(c_C, dcv1);
-  memcpy(&dcv2[0], &dcv0[0], sizeof(creal_T) << 12);
-  dcv2[4096].re = 0.0;
-  dcv2[4096].im = 0.0;
-  for (i = 0; i < 4095; i++) {
-    dcv2[i + 4097].re = dcv1[i].re;
-    dcv2[i + 4097].im = -dcv1[i].im;
+  coder::ifft(C, dcv);
+  for (b_i = 0; b_i < 8192; b_i++) {
+    cLR[b_i] = dcv[b_i].re;
   }
-
-  ifft(dcv2, dcv3);
-  for (i = 0; i < 8192; i++) {
-    cLL[i] = dcv3[i].re;
-  }
-
-  circshift(cLL, w);
-  for (i = 0; i < 4096; i++) {
-    C[i] = b_C[1 + (i << 2)];
-  }
-
-  squeeze(C, dcv0);
-  for (i = 0; i < 4095; i++) {
-    c_C[i] = b_C[1 + ((4095 - i) << 2)];
-  }
-
-  b_squeeze(c_C, dcv1);
-  memcpy(&dcv2[0], &dcv0[0], sizeof(creal_T) << 12);
-  dcv2[4096].re = 0.0;
-  dcv2[4096].im = 0.0;
-  for (i = 0; i < 4095; i++) {
-    dcv2[i + 4097].re = dcv1[i].re;
-    dcv2[i + 4097].im = -dcv1[i].im;
-  }
-
-  ifft(dcv2, dcv3);
-  for (i = 0; i < 8192; i++) {
-    cLR[i] = dcv3[i].re;
-  }
-
-  circshift(cLR, w);
+  coder::circshift(cLR, ntdelay);
 }
 
-//
-// File trailer for transaural_ir3.cpp
-//
-// [EOF]
-//
+// End of code generation (transaural_ir3.cpp)

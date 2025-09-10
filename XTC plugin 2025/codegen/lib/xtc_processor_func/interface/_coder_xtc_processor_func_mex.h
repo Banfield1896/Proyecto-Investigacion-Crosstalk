@@ -1,31 +1,26 @@
-/*
- * File: _coder_xtc_processor_func_mex.h
- *
- * MATLAB Coder version            : 3.4
- * C/C++ source code generated on  : 07-Sep-2025 14:36:14
- */
+//
+// _coder_xtc_processor_func_mex.h
+//
+// Code generation for function 'xtc_processor_func'
+//
 
 #ifndef _CODER_XTC_PROCESSOR_FUNC_MEX_H
 #define _CODER_XTC_PROCESSOR_FUNC_MEX_H
 
-/* Include Files */
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include "tmwtypes.h"
-#include "mex.h"
+// Include files
 #include "emlrt.h"
-#include "_coder_xtc_processor_func_api.h"
+#include "mex.h"
+#include "tmwtypes.h"
 
-/* Function Declarations */
-extern void mexFunction(int32_T nlhs, mxArray *plhs[], int32_T nrhs, const
-  mxArray *prhs[]);
-extern emlrtCTX mexFunctionCreateRootTLS(void);
+// Function Declarations
+MEXFUNCTION_LINKAGE void mexFunction(int32_T nlhs, mxArray *plhs[],
+                                     int32_T nrhs, const mxArray *prhs[]);
+
+emlrtCTX mexFunctionCreateRootTLS();
+
+void unsafe_xtc_processor_func_mexFunction(int32_T nlhs, mxArray *plhs[1],
+                                           int32_T nrhs,
+                                           const mxArray *prhs[2]);
 
 #endif
-
-/*
- * File trailer for _coder_xtc_processor_func_mex.h
- *
- * [EOF]
- */
+// End of code generation (_coder_xtc_processor_func_mex.h)

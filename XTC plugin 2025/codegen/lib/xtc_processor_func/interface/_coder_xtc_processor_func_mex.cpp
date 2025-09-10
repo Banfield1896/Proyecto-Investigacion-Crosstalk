@@ -1,105 +1,62 @@
-/*
- * File: _coder_xtc_processor_func_mex.cpp
- *
- * MATLAB Coder version            : 3.4
- * C/C++ source code generated on  : 07-Sep-2025 14:36:14
- */
+//
+// _coder_xtc_processor_func_mex.cpp
+//
+// Code generation for function 'xtc_processor_func'
+//
 
-/* Include Files */
-#include "_coder_xtc_processor_func_api.h"
+// Include files
 #include "_coder_xtc_processor_func_mex.h"
+#include "_coder_xtc_processor_func_api.h"
 
-/* Function Declarations */
-static void xtc_processor_func_mexFunction(int32_T nlhs, mxArray *plhs[1],
-  int32_T nrhs, const mxArray *prhs[2]);
-
-/* Function Definitions */
-
-/*
- * Arguments    : int32_T nlhs
- *                const mxArray *plhs[1]
- *                int32_T nrhs
- *                const mxArray *prhs[2]
- * Return Type  : void
- */
-static void xtc_processor_func_mexFunction(int32_T nlhs, mxArray *plhs[1],
-  int32_T nrhs, const mxArray *prhs[2])
+// Function Definitions
+void mexFunction(int32_T nlhs, mxArray *plhs[], int32_T nrhs,
+                 const mxArray *prhs[])
 {
-  const mxArray *inputs[2];
-  const mxArray *outputs[1];
-  int32_T b_nlhs;
-  emlrtStack st = { NULL,              /* site */
-    NULL,                              /* tls */
-    NULL                               /* prev */
+  mexAtExit(&xtc_processor_func_atexit);
+  // Module initialization.
+  xtc_processor_func_initialize();
+  try {
+    emlrtShouldCleanupOnError((emlrtCTX *)emlrtRootTLSGlobal, false);
+    // Dispatch the entry-point.
+    unsafe_xtc_processor_func_mexFunction(nlhs, plhs, nrhs, prhs);
+    // Module termination.
+    xtc_processor_func_terminate();
+  } catch (...) {
+    emlrtCleanupOnException((emlrtCTX *)emlrtRootTLSGlobal);
+    throw;
+  }
+}
+
+emlrtCTX mexFunctionCreateRootTLS()
+{
+  emlrtCreateRootTLSR2021a(&emlrtRootTLSGlobal, &emlrtContextGlobal, nullptr, 1,
+                           nullptr);
+  return emlrtRootTLSGlobal;
+}
+
+void unsafe_xtc_processor_func_mexFunction(int32_T nlhs, mxArray *plhs[1],
+                                           int32_T nrhs, const mxArray *prhs[2])
+{
+  emlrtStack st{
+      nullptr, // site
+      nullptr, // tls
+      nullptr  // prev
   };
-
+  const mxArray *outputs;
   st.tls = emlrtRootTLSGlobal;
-
-  /* Check for proper number of arguments. */
+  // Check for proper number of arguments.
   if (nrhs != 2) {
     emlrtErrMsgIdAndTxt(&st, "EMLRT:runTime:WrongNumberOfInputs", 5, 12, 2, 4,
                         18, "xtc_processor_func");
   }
-
   if (nlhs > 1) {
     emlrtErrMsgIdAndTxt(&st, "EMLRT:runTime:TooManyOutputArguments", 3, 4, 18,
                         "xtc_processor_func");
   }
-
-  /* Temporary copy for mex inputs. */
-  if (0 <= nrhs - 1) {
-    memcpy((void *)&inputs[0], (void *)&prhs[0], (uint32_T)(nrhs * (int32_T)
-            sizeof(const mxArray *)));
-  }
-
-  /* Call the function. */
-  xtc_processor_func_api(inputs, outputs);
-
-  /* Copy over outputs to the caller. */
-  if (nlhs < 1) {
-    b_nlhs = 1;
-  } else {
-    b_nlhs = nlhs;
-  }
-
-  emlrtReturnArrays(b_nlhs, plhs, outputs);
-
-  /* Module termination. */
-  xtc_processor_func_terminate();
+  // Call the function.
+  xtc_processor_func_api(prhs, &outputs);
+  // Copy over outputs to the caller.
+  emlrtReturnArrays(1, &plhs[0], &outputs);
 }
 
-/*
- * Arguments    : int32_T nlhs
- *                const mxArray * const plhs[]
- *                int32_T nrhs
- *                const mxArray * const prhs[]
- * Return Type  : void
- */
-void mexFunction(int32_T nlhs, mxArray *plhs[], int32_T nrhs, const mxArray
-                 *prhs[])
-{
-  mexAtExit(xtc_processor_func_atexit);
-
-  /* Initialize the memory manager. */
-  /* Module initialization. */
-  xtc_processor_func_initialize();
-
-  /* Dispatch the entry-point. */
-  xtc_processor_func_mexFunction(nlhs, plhs, nrhs, prhs);
-}
-
-/*
- * Arguments    : void
- * Return Type  : emlrtCTX
- */
-emlrtCTX mexFunctionCreateRootTLS(void)
-{
-  emlrtCreateRootTLS(&emlrtRootTLSGlobal, &emlrtContextGlobal, NULL, 1);
-  return emlrtRootTLSGlobal;
-}
-
-/*
- * File trailer for _coder_xtc_processor_func_mex.cpp
- *
- * [EOF]
- */
+// End of code generation (_coder_xtc_processor_func_mex.cpp)

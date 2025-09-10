@@ -1,29 +1,41 @@
 //
-// File: FrequencyDomainFIRFilter.h
+// FrequencyDomainFIRFilter.h
 //
-// MATLAB Coder version            : 3.4
-// C/C++ source code generated on  : 07-Sep-2025 14:36:14
+// Code generation for function 'FrequencyDomainFIRFilter'
 //
+
 #ifndef FREQUENCYDOMAINFIRFILTER_H
 #define FREQUENCYDOMAINFIRFILTER_H
 
-// Include Files
-#include <cmath>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include "rt_nonfinite.h"
+// Include files
+#include "NoPartitionOS.h"
 #include "rtwtypes.h"
-#include "xtc_processor_func_types.h"
+#include "xtc_processor_func_internal_types.h"
+#include "coder_array.h"
+#include <cstddef>
+#include <cstdlib>
 
-// Function Declarations
-extern void c_FrequencyDomainFIRFilter_set_(dsp_FrequencyDomainFIRFilter *obj,
-  const double value[8192]);
+// Type Definitions
+namespace coder {
+namespace dsp {
+class FrequencyDomainFIRFilter {
+public:
+  void step(const ::coder::array<double, 1U> &varargin_1,
+            ::coder::array<double, 1U> &varargout_1);
+  boolean_T matlabCodegenIsDeleted;
+  int isInitialized;
+  boolean_T isSetupComplete;
+  boolean_T TunablePropsChanged;
+  double Numerator[8192];
+  internal::NoPartitionOS pFilter;
+  int NumChannels;
+
+private:
+  cell_wrap_2 inputVarSize[1];
+};
+
+} // namespace dsp
+} // namespace coder
 
 #endif
-
-//
-// File trailer for FrequencyDomainFIRFilter.h
-//
-// [EOF]
-//
+// End of code generation (FrequencyDomainFIRFilter.h)

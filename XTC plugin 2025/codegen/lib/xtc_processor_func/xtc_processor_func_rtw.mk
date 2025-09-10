@@ -1,13 +1,9 @@
 ###########################################################################
-## Makefile generated for MATLAB file/project 'xtc_processor_func'. 
+## Makefile generated for component 'xtc_processor_func'. 
 ## 
 ## Makefile     : xtc_processor_func_rtw.mk
-## Generated on : Sun Sep 07 14:33:37 2025
-## MATLAB Coder version: 3.4 (R2017b)
-## 
-## Build Info:
-## 
-## Final product: $(RELATIVE_PATH_TO_ANCHOR)\xtc_processor_func.lib
+## Generated on : Tue Sep 09 21:11:23 2025
+## Final product: .\xtc_processor_func.lib
 ## Product type : static-library
 ## 
 ###########################################################################
@@ -19,33 +15,35 @@
 # Macro Descriptions:
 # PRODUCT_NAME            Name of the system to build
 # MAKEFILE                Name of this makefile
-# COMPUTER                Computer type. See the MATLAB "computer" command.
-# GEN_LINKER_RESPONSE     Command to generate a linker response file 
+# COMPILER_COMMAND_FILE   Compiler command listing model reference header paths
 # CMD_FILE                Command file
+# MODELLIB                Static library target
 
 PRODUCT_NAME              = xtc_processor_func
 MAKEFILE                  = xtc_processor_func_rtw.mk
-COMPUTER                  = PCWIN64
-MATLAB_ROOT               = C:\PROGRA~1\MATLAB\R2017b
-MATLAB_BIN                = C:\PROGRA~1\MATLAB\R2017b\bin
+MATLAB_ROOT               = D:\Archivos de programa\MATLAB\R2021b
+MATLAB_BIN                = D:\Archivos de programa\MATLAB\R2021b\bin
 MATLAB_ARCH_BIN           = $(MATLAB_BIN)\win64
-MASTER_ANCHOR_DIR         = 
-START_DIR                 = C:\Users\marti\OneDrive\41-PRO~1\PROYEC~1\XTCPLU~1
-ARCH                      = win64
-RELATIVE_PATH_TO_ANCHOR   = .
-GEN_LINKER_RESPONSE       = $(MATLAB_ARCH_BIN)\createResponseFile.exe 1 
-CMD_FILE                  = $(PRODUCT_NAME).rsp
+START_DIR                 = C:\Users\MARTIN~1\OneDrive\41-PRO~1\PROYEC~1\PROYEC~1\XTCPLU~1
+TGT_FCN_LIB               = ISO_C++11
+SOLVER_OBJ                = 
+CLASSIC_INTERFACE         = 0
+MODEL_HAS_DYNAMICALLY_LOADED_SFCNS = 
+RELATIVE_PATH_TO_ANCHOR   = ..\..\..
+COMPILER_COMMAND_FILE     = xtc_processor_func_rtw_comp.rsp
+CMD_FILE                  = xtc_processor_func_rtw.rsp
 C_STANDARD_OPTS           = 
 CPP_STANDARD_OPTS         = 
 NODEBUG                   = 1
+MODELLIB                  = xtc_processor_func.lib
 
 ###########################################################################
 ## TOOLCHAIN SPECIFICATIONS
 ###########################################################################
 
-# Toolchain Name:          Microsoft Visual C++ 2017 v15.0 | nmake (64-bit Windows)
-# Supported Version(s):    15.0
-# ToolchainInfo Version:   R2017b
+# Toolchain Name:          Microsoft Visual C++ 2019 v16.0 | nmake (64-bit Windows)
+# Supported Version(s):    16.0
+# ToolchainInfo Version:   2021b
 # Specification Revision:  1.0
 # 
 #-------------------------------------------
@@ -64,15 +62,13 @@ NODEBUG                   = 1
 # MACROS
 #-----------
 
-MEX_OPTS_FILE       = $(MATLAB_ROOT)\bin\$(ARCH)\mexopts\msvc2017.xml
 MW_EXTERNLIB_DIR    = $(MATLAB_ROOT)\extern\lib\win64\microsoft
 MW_LIB_DIR          = $(MATLAB_ROOT)\lib\win64
-MEX_ARCH            = -win64
 CPU                 = AMD64
 APPVER              = 5.02
 CVARSFLAG           = $(cvarsmt)
 CFLAGS_ADDITIONAL   = -D_CRT_SECURE_NO_WARNINGS
-CPPFLAGS_ADDITIONAL = -EHs -D_CRT_SECURE_NO_WARNINGS
+CPPFLAGS_ADDITIONAL = -EHs -D_CRT_SECURE_NO_WARNINGS /wd4251
 LIBS_TOOLCHAIN      = $(conlibs)
 
 TOOLCHAIN_SRCS = 
@@ -132,15 +128,15 @@ ECHO                = @echo
 MV                  = @ren
 RUN                 = @cmd /C
 
-#----------------------------------------
-# "Faster Builds" Build Configuration
-#----------------------------------------
+#--------------------------------------
+# "Faster Runs" Build Configuration
+#--------------------------------------
 
 ARFLAGS              = /nologo
 CFLAGS               = $(cflags) $(CVARSFLAG) $(CFLAGS_ADDITIONAL) \
-                       /Od /Oy-
+                       /O2 /Oy-
 CPPFLAGS             = /TP $(cflags) $(CVARSFLAG) $(CPPFLAGS_ADDITIONAL) \
-                       /Od /Oy-
+                       /O2 /Oy-
 CPP_LDFLAGS          = $(ldebug) $(conflags) $(LIBS_TOOLCHAIN)
 CPP_SHAREDLIB_LDFLAGS  = $(ldebug) $(conflags) $(LIBS_TOOLCHAIN) \
                          -dll -def:$(DEF_FILE)
@@ -149,36 +145,19 @@ EXECUTE_FLAGS        =
 LDFLAGS              = $(ldebug) $(conflags) $(LIBS_TOOLCHAIN)
 MEX_CPPFLAGS         =
 MEX_CPPLDFLAGS       =
-MEX_CFLAGS           = $(MEX_ARCH) OPTIMFLAGS="/Od /Oy- $(MDFLAG) $(DEFINES)" $(MEX_OPTS_FLAG)
-MEX_LDFLAGS          = LDFLAGS=='$$LDFLAGS'
+MEX_CFLAGS           =
+MEX_LDFLAGS          =
 MAKE_FLAGS           = -f $(MAKEFILE)
 SHAREDLIB_LDFLAGS    = $(ldebug) $(conflags) $(LIBS_TOOLCHAIN) \
                        -dll -def:$(DEF_FILE)
 
-#--------------------
-# File extensions
-#--------------------
-
-H_EXT               = .h
-OBJ_EXT             = .obj
-C_EXT               = .c
-EXE_EXT             = .exe
-SHAREDLIB_EXT       = .dll
-HPP_EXT             = .hpp
-OBJ_EXT             = .obj
-CPP_EXT             = .cpp
-EXE_EXT             = .exe
-SHAREDLIB_EXT       = .dll
-STATICLIB_EXT       = .lib
-MEX_EXT             = .mexw64
-MAKE_EXT            = .mk
 
 
 ###########################################################################
 ## OUTPUT INFO
 ###########################################################################
 
-PRODUCT = $(RELATIVE_PATH_TO_ANCHOR)\xtc_processor_func.lib
+PRODUCT = .\xtc_processor_func.lib
 PRODUCT_TYPE = "static-library"
 BUILD_TYPE = "Static Library"
 
@@ -186,7 +165,7 @@ BUILD_TYPE = "Static Library"
 ## INCLUDE PATHS
 ###########################################################################
 
-INCLUDES_BUILDINFO = $(START_DIR)\codegen\lib\xtc_processor_func;$(START_DIR);$(MATLAB_ROOT)\extern\include;$(MATLAB_ROOT)\simulink\include;$(MATLAB_ROOT)\rtw\c\src;$(MATLAB_ROOT)\rtw\c\src\ext_mode\common;$(MATLAB_ROOT)\rtw\c\ert
+INCLUDES_BUILDINFO = 
 
 INCLUDES = $(INCLUDES_BUILDINFO)
 
@@ -194,15 +173,16 @@ INCLUDES = $(INCLUDES_BUILDINFO)
 ## DEFINES
 ###########################################################################
 
-DEFINES_STANDARD = -DMODEL=xtc_processor_func -DHAVESTDIO -DUSE_RTMODEL
+DEFINES_CUSTOM = 
+DEFINES_STANDARD = -DMODEL=xtc_processor_func
 
-DEFINES = $(DEFINES_STANDARD)
+DEFINES = $(DEFINES_CUSTOM) $(DEFINES_STANDARD)
 
 ###########################################################################
 ## SOURCE FILES
 ###########################################################################
 
-SRCS = $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_data.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_initialize.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_terminate.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func.cpp $(START_DIR)\codegen\lib\xtc_processor_func\FrequencyDomainFIRFilter.cpp $(START_DIR)\codegen\lib\xtc_processor_func\SystemCore.cpp $(START_DIR)\codegen\lib\xtc_processor_func\transaural_ir3.cpp $(START_DIR)\codegen\lib\xtc_processor_func\sqrt.cpp $(START_DIR)\codegen\lib\xtc_processor_func\exp.cpp $(START_DIR)\codegen\lib\xtc_processor_func\inv.cpp $(START_DIR)\codegen\lib\xtc_processor_func\squeeze.cpp $(START_DIR)\codegen\lib\xtc_processor_func\ifft.cpp $(START_DIR)\codegen\lib\xtc_processor_func\fft.cpp $(START_DIR)\codegen\lib\xtc_processor_func\circshift.cpp $(START_DIR)\codegen\lib\xtc_processor_func\NoPartitionOS.cpp $(START_DIR)\codegen\lib\xtc_processor_func\NoPartitionOAOSBase.cpp $(START_DIR)\codegen\lib\xtc_processor_func\fft1.cpp $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffer.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_emxutil.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_emxAPI.cpp $(START_DIR)\codegen\lib\xtc_processor_func\rt_nonfinite.cpp $(START_DIR)\codegen\lib\xtc_processor_func\rtGetNaN.cpp $(START_DIR)\codegen\lib\xtc_processor_func\rtGetInf.cpp
+SRCS = $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_data.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_initialize.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_terminate.cpp $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func.cpp $(START_DIR)\codegen\lib\xtc_processor_func\transaural_ir3.cpp $(START_DIR)\codegen\lib\xtc_processor_func\ifft.cpp $(START_DIR)\codegen\lib\xtc_processor_func\circshift.cpp $(START_DIR)\codegen\lib\xtc_processor_func\cat.cpp $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffercgHelper.cpp $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffer.cpp $(START_DIR)\codegen\lib\xtc_processor_func\NoPartitionOS.cpp $(START_DIR)\codegen\lib\xtc_processor_func\FrequencyDomainFIRFilter.cpp $(START_DIR)\codegen\lib\xtc_processor_func\FFTImplementationCallback.cpp
 
 ALL_SRCS = $(SRCS)
 
@@ -210,7 +190,7 @@ ALL_SRCS = $(SRCS)
 ## OBJECTS
 ###########################################################################
 
-OBJS = xtc_processor_func_data.obj xtc_processor_func_initialize.obj xtc_processor_func_terminate.obj xtc_processor_func.obj FrequencyDomainFIRFilter.obj SystemCore.obj transaural_ir3.obj sqrt.obj exp.obj inv.obj squeeze.obj ifft.obj fft.obj circshift.obj NoPartitionOS.obj NoPartitionOAOSBase.obj fft1.obj AsyncBuffer.obj xtc_processor_func_emxutil.obj xtc_processor_func_emxAPI.obj rt_nonfinite.obj rtGetNaN.obj rtGetInf.obj
+OBJS = xtc_processor_func_data.obj xtc_processor_func_initialize.obj xtc_processor_func_terminate.obj xtc_processor_func.obj transaural_ir3.obj ifft.obj circshift.obj cat.obj AsyncBuffercgHelper.obj AsyncBuffer.obj NoPartitionOS.obj FrequencyDomainFIRFilter.obj FFTImplementationCallback.obj
 
 ALL_OBJS = $(OBJS)
 
@@ -240,17 +220,19 @@ SYSTEM_LIBS =
 # C Compiler
 #---------------
 
-CFLAGS_BASIC = $(DEFINES) 
+CFLAGS_ = /source-charset:utf-8
+CFLAGS_BASIC = $(DEFINES) @$(COMPILER_COMMAND_FILE)
 
-CFLAGS = $(CFLAGS) $(CFLAGS_BASIC)
+CFLAGS = $(CFLAGS) $(CFLAGS_) $(CFLAGS_BASIC)
 
 #-----------------
 # C++ Compiler
 #-----------------
 
-CPPFLAGS_BASIC = $(DEFINES) 
+CPPFLAGS_ = /source-charset:utf-8
+CPPFLAGS_BASIC = $(DEFINES) @$(COMPILER_COMMAND_FILE)
 
-CPPFLAGS = $(CPPFLAGS) $(CPPFLAGS_BASIC)
+CPPFLAGS = $(CPPFLAGS) $(CPPFLAGS_) $(CPPFLAGS_BASIC)
 
 ###########################################################################
 ## INLINED COMMANDS
@@ -277,7 +259,7 @@ build : set_environment_variables prebuild $(PRODUCT)
 prebuild : 
 
 
-download : build
+download : $(PRODUCT)
 
 
 execute : download
@@ -297,11 +279,9 @@ set_environment_variables :
 #---------------------------------
 
 $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS)
-	$(GEN_LINKER_RESPONSE) $(CMD_FILE) $(OBJS)
 	@cmd /C "@echo ### Creating static library "$(PRODUCT)" ..."
 	$(AR) $(ARFLAGS) -out:$(PRODUCT) @$(CMD_FILE)
 	@cmd /C "@echo ### Created: $(PRODUCT)"
-	$(RM) $(CMD_FILE)
 
 
 ###########################################################################
@@ -328,14 +308,6 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS)
 	$(CPP) $(CPPFLAGS) -Fo"$@" "$<"
 
 
-{$(START_DIR)}.c.obj :
-	$(CC) $(CFLAGS) -Fo"$@" "$<"
-
-
-{$(START_DIR)}.cpp.obj :
-	$(CPP) $(CPPFLAGS) -Fo"$@" "$<"
-
-
 {$(START_DIR)\codegen\lib\xtc_processor_func}.c.obj :
 	$(CC) $(CFLAGS) -Fo"$@" "$<"
 
@@ -344,19 +316,71 @@ $(PRODUCT) : $(OBJS) $(PREBUILT_OBJS)
 	$(CPP) $(CPPFLAGS) -Fo"$@" "$<"
 
 
-{$(MATLAB_ROOT)\rtw\c\src}.c.obj :
+{$(START_DIR)}.c.obj :
 	$(CC) $(CFLAGS) -Fo"$@" "$<"
 
 
-{$(MATLAB_ROOT)\rtw\c\src}.cpp.obj :
+{$(START_DIR)}.cpp.obj :
 	$(CPP) $(CPPFLAGS) -Fo"$@" "$<"
+
+
+xtc_processor_func_data.obj : $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_data.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_data.cpp
+
+
+xtc_processor_func_initialize.obj : $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_initialize.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_initialize.cpp
+
+
+xtc_processor_func_terminate.obj : $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_terminate.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func_terminate.cpp
+
+
+xtc_processor_func.obj : $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\xtc_processor_func.cpp
+
+
+transaural_ir3.obj : $(START_DIR)\codegen\lib\xtc_processor_func\transaural_ir3.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\transaural_ir3.cpp
+
+
+ifft.obj : $(START_DIR)\codegen\lib\xtc_processor_func\ifft.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\ifft.cpp
+
+
+circshift.obj : $(START_DIR)\codegen\lib\xtc_processor_func\circshift.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\circshift.cpp
+
+
+cat.obj : $(START_DIR)\codegen\lib\xtc_processor_func\cat.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\cat.cpp
+
+
+AsyncBuffercgHelper.obj : $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffercgHelper.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffercgHelper.cpp
+
+
+AsyncBuffer.obj : $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffer.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\AsyncBuffer.cpp
+
+
+NoPartitionOS.obj : $(START_DIR)\codegen\lib\xtc_processor_func\NoPartitionOS.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\NoPartitionOS.cpp
+
+
+FrequencyDomainFIRFilter.obj : $(START_DIR)\codegen\lib\xtc_processor_func\FrequencyDomainFIRFilter.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\FrequencyDomainFIRFilter.cpp
+
+
+FFTImplementationCallback.obj : $(START_DIR)\codegen\lib\xtc_processor_func\FFTImplementationCallback.cpp
+	$(CPP) $(CPPFLAGS) -Fo"$@" $(START_DIR)\codegen\lib\xtc_processor_func\FFTImplementationCallback.cpp
 
 
 ###########################################################################
 ## DEPENDENCIES
 ###########################################################################
 
-$(ALL_OBJS) : $(MAKEFILE) rtw_proj.tmw
+$(ALL_OBJS) : rtw_proj.tmw $(COMPILER_COMMAND_FILE) $(MAKEFILE)
 
 
 ###########################################################################

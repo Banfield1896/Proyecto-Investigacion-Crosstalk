@@ -1,657 +1,389 @@
 //
-// File: AsyncBuffer.cpp
+// AsyncBuffer.cpp
 //
-// MATLAB Coder version            : 3.4
-// C/C++ source code generated on  : 07-Sep-2025 14:36:14
+// Code generation for function 'AsyncBuffer'
 //
 
-// Include Files
-#include "rt_nonfinite.h"
-#include "xtc_processor_func.h"
+// Include files
 #include "AsyncBuffer.h"
-#include "xtc_processor_func_emxutil.h"
+#include "AsyncBuffercgHelper.h"
+#include "xtc_processor_func_internal_types.h"
+#include "coder_array.h"
 
 // Function Definitions
-
-//
-// Arguments    : dsp_AsyncBuffer *obj
-//                int numRows
-//                emxArray_real_T *out
-// Return Type  : void
-//
-void AsyncBuffer_read(dsp_AsyncBuffer *obj, int numRows, emxArray_real_T *out)
+namespace coder {
+namespace dsp {
+void AsyncBuffer::read(int numRows, ::coder::array<double, 1U> &out)
 {
+  array<double, 1U> b_out;
+  array<int, 2U> readIdx;
+  array<int, 2U> y;
+  int y_data[8194];
+  int b_qY;
+  int b_wPtr;
+  int c;
+  int n;
+  int qY;
   int rPtr;
   int wPtr;
-  int underrun;
   int yk;
-  int c;
-  emxArray_int32_T *readIdx;
-  int n;
-  int y_data[8194];
-  int k;
-  emxArray_int32_T *y;
-  rPtr = obj->ReadPointer;
-  wPtr = obj->WritePointer;
-  underrun = 0;
+  wPtr = pBuffer.WritePointer;
+  rPtr = pBuffer.ReadPointer;
+  b_wPtr = pBuffer.WritePointer;
+  qY = 0;
   if (rPtr > 2147483646) {
     rPtr = MAX_int32_T;
   } else {
     rPtr++;
   }
-
   if (rPtr > 8194) {
     rPtr = 1;
   }
-
   if ((rPtr < 0) && (numRows < MIN_int32_T - rPtr)) {
-    yk = MIN_int32_T;
+    b_qY = MIN_int32_T;
   } else if ((rPtr > 0) && (numRows > MAX_int32_T - rPtr)) {
-    yk = MAX_int32_T;
+    b_qY = MAX_int32_T;
   } else {
-    yk = rPtr + numRows;
+    b_qY = rPtr + numRows;
   }
-
-  if (yk < -2147483647) {
-    c = MIN_int32_T;
+  if (b_qY < -2147483647) {
+    b_qY = MIN_int32_T;
   } else {
-    c = yk - 1;
+    b_qY--;
   }
-
-  emxInit_int32_T(&readIdx, 2);
-  if (c > 8194) {
-    c -= 8194;
+  c = b_qY;
+  if (b_qY > 8194) {
+    int k;
+    c = b_qY - 8194;
+    n = 8195 - rPtr;
     y_data[0] = rPtr;
     yk = rPtr;
-    for (k = 2; k <= 8195 - rPtr; k++) {
+    for (k = 2; k <= n; k++) {
       yk++;
       y_data[k - 1] = yk;
     }
-
-    emxInit_int32_T(&y, 2);
-    k = y->size[0] * y->size[1];
-    y->size[0] = 1;
-    y->size[1] = c;
-    emxEnsureCapacity_int32_T(y, k);
-    y->data[0] = 1;
+    y.set_size(1, b_qY - 8194);
+    y[0] = 1;
     yk = 1;
     for (k = 2; k <= c; k++) {
       yk++;
-      y->data[k - 1] = yk;
+      y[k - 1] = yk;
     }
-
-    k = readIdx->size[0] * readIdx->size[1];
-    readIdx->size[0] = 1;
-    readIdx->size[1] = (y->size[1] - rPtr) + 8195;
-    emxEnsureCapacity_int32_T(readIdx, k);
-    yk = 8195 - rPtr;
-    for (k = 0; k < yk; k++) {
-      readIdx->data[readIdx->size[0] * k] = y_data[k];
+    readIdx.set_size(1, (y.size(1) - rPtr) + 8195);
+    for (yk = 0; yk < n; yk++) {
+      readIdx[yk] = y_data[yk];
     }
-
-    yk = y->size[1];
-    for (k = 0; k < yk; k++) {
-      readIdx->data[readIdx->size[0] * ((k - rPtr) + 8195)] = y->data[y->size[0]
-        * k];
+    n = y.size(1);
+    for (yk = 0; yk < n; yk++) {
+      readIdx[(yk - rPtr) + 8195] = y[yk];
     }
-
-    emxFree_int32_T(&y);
-    if (rPtr <= wPtr) {
-      if (wPtr < -2147475453) {
-        yk = MAX_int32_T;
+    if (rPtr <= b_wPtr) {
+      if (b_wPtr < -2147475453) {
+        qY = MAX_int32_T;
       } else {
-        yk = 8194 - wPtr;
+        qY = 8194 - b_wPtr;
       }
-
-      if (yk > 2147483646) {
-        yk = MAX_int32_T;
+      if (qY > 2147483646) {
+        qY = MAX_int32_T;
       } else {
-        yk++;
+        qY++;
       }
-
-      if ((yk < 0) && (c < MIN_int32_T - yk)) {
-        underrun = MIN_int32_T;
-      } else if ((yk > 0) && (c > MAX_int32_T - yk)) {
-        underrun = MAX_int32_T;
+      if ((qY < 0) && (b_qY - 8194 < MIN_int32_T - qY)) {
+        qY = MIN_int32_T;
+      } else if ((qY > 0) && (b_qY - 8194 > MAX_int32_T - qY)) {
+        qY = MAX_int32_T;
       } else {
-        underrun = yk + c;
+        qY = (qY + b_qY) - 8194;
       }
-    } else {
-      if (wPtr <= c) {
-        if (wPtr < c - MAX_int32_T) {
-          yk = MAX_int32_T;
-        } else {
-          yk = c - wPtr;
-        }
-
-        if (yk > 2147483646) {
-          underrun = MAX_int32_T;
-        } else {
-          underrun = yk + 1;
-        }
+    } else if (b_wPtr <= b_qY - 8194) {
+      if (b_wPtr < b_qY + 2147475455) {
+        b_qY = MAX_int32_T;
+      } else {
+        b_qY = (b_qY - b_wPtr) - 8194;
+      }
+      if (b_qY > 2147483646) {
+        qY = MAX_int32_T;
+      } else {
+        qY = b_qY + 1;
       }
     }
   } else {
-    if (c < rPtr) {
+    if (b_qY < rPtr) {
       n = 0;
     } else {
-      n = (c - rPtr) + 1;
+      n = (b_qY - rPtr) + 1;
     }
-
     if (n > 0) {
       y_data[0] = rPtr;
       yk = rPtr;
-      for (k = 2; k <= n; k++) {
+      for (int k{2}; k <= n; k++) {
         yk++;
         y_data[k - 1] = yk;
       }
     }
-
-    k = readIdx->size[0] * readIdx->size[1];
-    readIdx->size[0] = 1;
-    readIdx->size[1] = n;
-    emxEnsureCapacity_int32_T(readIdx, k);
-    for (k = 0; k < n; k++) {
-      readIdx->data[k] = y_data[k];
+    readIdx.set_size(1, n);
+    for (yk = 0; yk < n; yk++) {
+      readIdx[yk] = y_data[yk];
     }
-
-    if ((rPtr <= wPtr) && (wPtr <= c)) {
-      if ((c >= 0) && (wPtr < c - MAX_int32_T)) {
-        yk = MAX_int32_T;
-      } else if ((c < 0) && (wPtr > c - MIN_int32_T)) {
-        yk = MIN_int32_T;
+    if ((rPtr <= b_wPtr) && (b_wPtr <= b_qY)) {
+      if ((b_qY >= 0) && (b_wPtr < b_qY - MAX_int32_T)) {
+        b_qY = MAX_int32_T;
+      } else if ((b_qY < 0) && (b_wPtr > b_qY - MIN_int32_T)) {
+        b_qY = MIN_int32_T;
       } else {
-        yk = c - wPtr;
+        b_qY -= b_wPtr;
       }
-
-      if (yk > 2147483646) {
-        underrun = MAX_int32_T;
+      if (b_qY > 2147483646) {
+        qY = MAX_int32_T;
       } else {
-        underrun = yk + 1;
+        qY = b_qY + 1;
       }
     }
   }
-
-  k = out->size[0];
-  out->size[0] = readIdx->size[1];
-  emxEnsureCapacity_real_T(out, k);
-  yk = readIdx->size[1];
-  for (k = 0; k < yk; k++) {
-    out->data[k] = obj->Cache[readIdx->data[readIdx->size[0] * k] - 1];
+  b_out.set_size(readIdx.size(1));
+  n = readIdx.size(1);
+  for (yk = 0; yk < n; yk++) {
+    b_out[yk] = pBuffer.Cache[readIdx[yk] - 1];
   }
-
-  emxFree_int32_T(&readIdx);
-  if (underrun != 0) {
-    if ((numRows >= 0) && (underrun < numRows - MAX_int32_T)) {
-      yk = MAX_int32_T;
-    } else if ((numRows < 0) && (underrun > numRows - MIN_int32_T)) {
-      yk = MIN_int32_T;
+  if (qY != 0) {
+    if ((numRows >= 0) && (qY < numRows - MAX_int32_T)) {
+      b_qY = MAX_int32_T;
+    } else if ((numRows < 0) && (qY > numRows - MIN_int32_T)) {
+      b_qY = MIN_int32_T;
     } else {
-      yk = numRows - underrun;
+      b_qY = numRows - qY;
     }
-
-    if (yk > 2147483646) {
-      yk = MAX_int32_T;
+    if (b_qY > 2147483646) {
+      b_qY = MAX_int32_T;
     } else {
-      yk++;
+      b_qY++;
     }
-
-    if (yk > numRows) {
-      k = 0;
-    } else {
-      k = yk - 1;
+    if (b_qY > numRows) {
+      b_qY = 1;
     }
-
-    for (yk = 0; yk < underrun; yk++) {
-      out->data[k + yk] = 0.0;
+    for (yk = 0; yk < qY; yk++) {
+      b_out[(b_qY + yk) - 1] = 0.0;
     }
-
-    if (wPtr < -2147483647) {
-      rPtr = MIN_int32_T;
-    } else {
-      rPtr = wPtr - 1;
-    }
+  }
+  out.set_size(b_out.size(0));
+  n = b_out.size(0);
+  for (yk = 0; yk < n; yk++) {
+    out[yk] = b_out[yk];
+  }
+  n = pBuffer.CumulativeUnderrun;
+  if ((n < 0) && (qY < MIN_int32_T - n)) {
+    b_qY = MIN_int32_T;
+  } else if ((n > 0) && (qY > MAX_int32_T - n)) {
+    b_qY = MAX_int32_T;
   } else {
-    rPtr = c;
+    b_qY = n + qY;
   }
-
-  yk = obj->CumulativeUnderrun;
-  if ((yk < 0) && (underrun < MIN_int32_T - yk)) {
-    yk = MIN_int32_T;
-  } else if ((yk > 0) && (underrun > MAX_int32_T - yk)) {
-    yk = MAX_int32_T;
+  pBuffer.CumulativeUnderrun = b_qY;
+  if (wPtr < -2147483647) {
+    b_qY = MIN_int32_T;
   } else {
-    yk += underrun;
+    b_qY = wPtr - 1;
   }
-
-  obj->CumulativeUnderrun = yk;
-  obj->ReadPointer = rPtr;
+  if (qY != 0) {
+    pBuffer.ReadPointer = b_qY;
+  } else {
+    pBuffer.ReadPointer = c;
+  }
 }
 
-//
-// Arguments    : dsp_AsyncBuffer *obj
-//                const double in[8193]
-// Return Type  : void
-//
-void AsyncBuffer_stepImpl(dsp_AsyncBuffer *obj, const double in[8193])
+void AsyncBuffer::write(const ::coder::array<double, 1U> &in)
 {
-  int wPtr;
-  int rPtr;
-  int overrun;
-  int yk;
-  int c;
-  emxArray_int32_T *bc;
-  int n;
+  internal::AsyncBuffercgHelper *obj;
+  array<int, 2U> bc;
+  array<int, 2U> y;
+  array<short, 1U> r;
+  cell_wrap_2 varSizes;
   int y_data[8194];
-  int k;
-  int i4;
-  emxArray_int32_T *y;
-  short tmp_data[16386];
-  wPtr = obj->WritePointer;
-  rPtr = obj->ReadPointer;
-  overrun = 0;
-  if (wPtr > 2147475454) {
-    yk = MAX_int32_T;
-  } else {
-    yk = wPtr + 8193;
-  }
-
-  c = yk - 1;
-  emxInit_int32_T(&bc, 2);
-  if (c > 8194) {
-    c -= 8194;
-    y_data[0] = wPtr;
-    yk = wPtr;
-    for (k = 2; k <= 8195 - wPtr; k++) {
-      yk++;
-      y_data[k - 1] = yk;
-    }
-
-    emxInit_int32_T(&y, 2);
-    i4 = y->size[0] * y->size[1];
-    y->size[0] = 1;
-    y->size[1] = c;
-    emxEnsureCapacity_int32_T(y, i4);
-    y->data[0] = 1;
-    yk = 1;
-    for (k = 2; k <= c; k++) {
-      yk++;
-      y->data[k - 1] = yk;
-    }
-
-    i4 = bc->size[0] * bc->size[1];
-    bc->size[0] = 1;
-    bc->size[1] = (y->size[1] - wPtr) + 8195;
-    emxEnsureCapacity_int32_T(bc, i4);
-    k = 8195 - wPtr;
-    for (i4 = 0; i4 < k; i4++) {
-      bc->data[bc->size[0] * i4] = y_data[i4];
-    }
-
-    k = y->size[1];
-    for (i4 = 0; i4 < k; i4++) {
-      bc->data[bc->size[0] * ((i4 - wPtr) + 8195)] = y->data[y->size[0] * i4];
-    }
-
-    emxFree_int32_T(&y);
-    if (wPtr <= rPtr) {
-      if (rPtr < -2147475453) {
-        yk = MAX_int32_T;
-      } else {
-        yk = 8194 - rPtr;
-      }
-
-      if (yk > 2147483646) {
-        yk = MAX_int32_T;
-      } else {
-        yk++;
-      }
-
-      if ((yk < 0) && (c < MIN_int32_T - yk)) {
-        overrun = MIN_int32_T;
-      } else if ((yk > 0) && (c > MAX_int32_T - yk)) {
-        overrun = MAX_int32_T;
-      } else {
-        overrun = yk + c;
-      }
-    } else {
-      if (rPtr <= c) {
-        if (rPtr < c - MAX_int32_T) {
-          yk = MAX_int32_T;
-        } else {
-          yk = c - rPtr;
-        }
-
-        if (yk > 2147483646) {
-          overrun = MAX_int32_T;
-        } else {
-          overrun = yk + 1;
-        }
-      }
-    }
-  } else {
-    if (c < wPtr) {
-      n = 0;
-    } else {
-      n = (c - wPtr) + 1;
-    }
-
-    if (n > 0) {
-      y_data[0] = wPtr;
-      yk = wPtr;
-      for (k = 2; k <= n; k++) {
-        yk++;
-        y_data[k - 1] = yk;
-      }
-    }
-
-    i4 = bc->size[0] * bc->size[1];
-    bc->size[0] = 1;
-    bc->size[1] = n;
-    emxEnsureCapacity_int32_T(bc, i4);
-    for (i4 = 0; i4 < n; i4++) {
-      bc->data[i4] = y_data[i4];
-    }
-
-    if ((wPtr <= rPtr) && (rPtr <= c)) {
-      if ((c >= 0) && (rPtr < c - MAX_int32_T)) {
-        yk = MAX_int32_T;
-      } else if ((c < 0) && (rPtr > c - MIN_int32_T)) {
-        yk = MIN_int32_T;
-      } else {
-        yk = c - rPtr;
-      }
-
-      if (yk > 2147483646) {
-        overrun = MAX_int32_T;
-      } else {
-        overrun = yk + 1;
-      }
-    }
-  }
-
-  yk = bc->size[1];
-  k = bc->size[1];
-  for (i4 = 0; i4 < k; i4++) {
-    tmp_data[i4] = (short)((short)bc->data[bc->size[0] * i4] - 1);
-  }
-
-  emxFree_int32_T(&bc);
-  for (i4 = 0; i4 < yk; i4++) {
-    obj->Cache[tmp_data[i4]] = in[i4];
-  }
-
-  if (c + 1 > 8194) {
-    wPtr = 1;
-  } else {
-    wPtr = c + 1;
-  }
-
-  if (overrun != 0) {
-    rPtr = wPtr;
-  }
-
-  yk = obj->CumulativeOverrun;
-  if ((yk < 0) && (overrun < MIN_int32_T - yk)) {
-    yk = MIN_int32_T;
-  } else if ((yk > 0) && (overrun > MAX_int32_T - yk)) {
-    yk = MAX_int32_T;
-  } else {
-    yk += overrun;
-  }
-
-  obj->CumulativeOverrun = yk;
-  obj->WritePointer = wPtr;
-  obj->ReadPointer = rPtr;
-}
-
-//
-// Arguments    : dsp_AsyncBuffer *obj
-//                const emxArray_real_T *in
-// Return Type  : void
-//
-void AsyncBuffer_write(dsp_AsyncBuffer *obj, const emxArray_real_T *in)
-{
-  unsigned int b_in[2];
-  int yk;
   unsigned int inSize[8];
-  cell_wrap_2 varSizes[1];
-  int i;
-  boolean_T exitg1;
-  int wPtr;
-  int rPtr;
-  int qY;
+  int b_qY;
   int c;
-  emxArray_int32_T *bc;
-  int n;
-  int y_data[8194];
-  emxArray_int32_T *y;
-  emxArray_int16_T *r1;
-  if (obj->isInitialized != 1) {
-    obj->isInitialized = 1;
-    b_in[0] = (unsigned int)in->size[0];
-    b_in[1] = 1U;
-    for (yk = 0; yk < 2; yk++) {
-      varSizes[0].f1[yk] = b_in[yk];
-    }
-
+  int i;
+  int k;
+  int qY;
+  int rPtr;
+  int wPtr;
+  int yk;
+  boolean_T exitg1;
+  obj = &pBuffer;
+  if (pBuffer.isInitialized != 1) {
+    pBuffer.isSetupComplete = false;
+    pBuffer.isInitialized = 1;
+    varSizes.f1[0] = static_cast<unsigned int>(in.size(0));
+    varSizes.f1[1] = 1U;
     for (yk = 0; yk < 6; yk++) {
-      varSizes[0].f1[yk + 2] = 1U;
+      varSizes.f1[yk + 2] = 1U;
     }
-
-    obj->inputVarSize[0] = varSizes[0];
-    obj->NumChannels = 1;
-    obj->AsyncBuffer_isInitialized = true;
+    pBuffer.inputVarSize[0] = varSizes;
+    pBuffer.NumChannels = 1;
+    pBuffer.AsyncBuffercgHelper_isInitialized = true;
     for (i = 0; i < 8194; i++) {
-      obj->Cache[i] = 0.0;
+      pBuffer.Cache[i] = 0.0;
     }
-
-    obj->ReadPointer = 1;
-    obj->WritePointer = 2;
-    obj->CumulativeOverrun = 0;
-    obj->CumulativeUnderrun = 0;
+    pBuffer.isSetupComplete = true;
+    pBuffer.ReadPointer = 1;
+    pBuffer.WritePointer = 2;
+    pBuffer.CumulativeOverrun = 0;
+    pBuffer.CumulativeUnderrun = 0;
     for (i = 0; i < 8194; i++) {
-      obj->Cache[i] = 0.0;
+      pBuffer.Cache[i] = 0.0;
     }
   }
-
-  b_in[0] = (unsigned int)in->size[0];
-  b_in[1] = 1U;
-  for (yk = 0; yk < 2; yk++) {
-    inSize[yk] = b_in[yk];
-  }
-
+  inSize[0] = static_cast<unsigned int>(in.size(0));
+  inSize[1] = 1U;
   for (yk = 0; yk < 6; yk++) {
     inSize[yk + 2] = 1U;
   }
-
-  i = 0;
+  k = 0;
   exitg1 = false;
-  while ((!exitg1) && (i < 8)) {
-    if (obj->inputVarSize[0].f1[i] != inSize[i]) {
+  while ((!exitg1) && (k < 8)) {
+    if (obj->inputVarSize[0].f1[k] != inSize[k]) {
       for (yk = 0; yk < 8; yk++) {
         obj->inputVarSize[0].f1[yk] = inSize[yk];
       }
-
       exitg1 = true;
     } else {
-      i++;
+      k++;
     }
   }
-
-  wPtr = obj->WritePointer;
-  rPtr = obj->ReadPointer;
+  wPtr = pBuffer.WritePointer;
+  rPtr = pBuffer.ReadPointer;
   qY = 0;
-  i = in->size[0];
-  if ((wPtr < 0) && (i < MIN_int32_T - wPtr)) {
-    i = MIN_int32_T;
-  } else if ((wPtr > 0) && (i > MAX_int32_T - wPtr)) {
-    i = MAX_int32_T;
+  if ((wPtr < 0) && (in.size(0) < MIN_int32_T - wPtr)) {
+    b_qY = MIN_int32_T;
+  } else if ((wPtr > 0) && (in.size(0) > MAX_int32_T - wPtr)) {
+    b_qY = MAX_int32_T;
   } else {
-    i += wPtr;
+    b_qY = wPtr + in.size(0);
   }
-
-  if (i < -2147483647) {
-    c = MIN_int32_T;
+  if (b_qY < -2147483647) {
+    b_qY = MIN_int32_T;
   } else {
-    c = i - 1;
+    b_qY--;
   }
-
-  emxInit_int32_T(&bc, 2);
-  if (c > 8194) {
-    c -= 8194;
+  c = b_qY;
+  if (b_qY > 8194) {
+    c = b_qY - 8194;
+    i = 8195 - wPtr;
     y_data[0] = wPtr;
     yk = wPtr;
-    for (i = 2; i <= 8195 - wPtr; i++) {
+    for (k = 2; k <= i; k++) {
       yk++;
-      y_data[i - 1] = yk;
+      y_data[k - 1] = yk;
     }
-
-    emxInit_int32_T(&y, 2);
-    yk = y->size[0] * y->size[1];
-    y->size[0] = 1;
-    y->size[1] = c;
-    emxEnsureCapacity_int32_T(y, yk);
-    y->data[0] = 1;
+    y.set_size(1, b_qY - 8194);
+    y[0] = 1;
     yk = 1;
-    for (i = 2; i <= c; i++) {
+    for (k = 2; k <= c; k++) {
       yk++;
-      y->data[i - 1] = yk;
+      y[k - 1] = yk;
     }
-
-    yk = bc->size[0] * bc->size[1];
-    bc->size[0] = 1;
-    bc->size[1] = (y->size[1] - wPtr) + 8195;
-    emxEnsureCapacity_int32_T(bc, yk);
-    i = 8195 - wPtr;
+    bc.set_size(1, (y.size(1) - wPtr) + 8195);
     for (yk = 0; yk < i; yk++) {
-      bc->data[bc->size[0] * yk] = y_data[yk];
+      bc[yk] = y_data[yk];
     }
-
-    i = y->size[1];
+    i = y.size(1);
     for (yk = 0; yk < i; yk++) {
-      bc->data[bc->size[0] * ((yk - wPtr) + 8195)] = y->data[y->size[0] * yk];
+      bc[(yk - wPtr) + 8195] = y[yk];
     }
-
-    emxFree_int32_T(&y);
     if (wPtr <= rPtr) {
       if (rPtr < -2147475453) {
-        i = MAX_int32_T;
-      } else {
-        i = 8194 - rPtr;
-      }
-
-      if (i > 2147483646) {
-        i = MAX_int32_T;
-      } else {
-        i++;
-      }
-
-      if ((i < 0) && (c < MIN_int32_T - i)) {
-        qY = MIN_int32_T;
-      } else if ((i > 0) && (c > MAX_int32_T - i)) {
         qY = MAX_int32_T;
       } else {
-        qY = i + c;
+        qY = 8194 - rPtr;
       }
-    } else {
-      if (rPtr <= c) {
-        if (rPtr < c - MAX_int32_T) {
-          i = MAX_int32_T;
-        } else {
-          i = c - rPtr;
-        }
-
-        if (i > 2147483646) {
-          qY = MAX_int32_T;
-        } else {
-          qY = i + 1;
-        }
+      if (qY > 2147483646) {
+        qY = MAX_int32_T;
+      } else {
+        qY++;
+      }
+      if ((qY < 0) && (b_qY - 8194 < MIN_int32_T - qY)) {
+        qY = MIN_int32_T;
+      } else if ((qY > 0) && (b_qY - 8194 > MAX_int32_T - qY)) {
+        qY = MAX_int32_T;
+      } else {
+        qY = (qY + b_qY) - 8194;
+      }
+    } else if (rPtr <= b_qY - 8194) {
+      if (rPtr < b_qY + 2147475455) {
+        b_qY = MAX_int32_T;
+      } else {
+        b_qY = (b_qY - rPtr) - 8194;
+      }
+      if (b_qY > 2147483646) {
+        qY = MAX_int32_T;
+      } else {
+        qY = b_qY + 1;
       }
     }
   } else {
-    if (c < wPtr) {
-      n = 0;
+    if (b_qY < wPtr) {
+      i = 0;
     } else {
-      n = (c - wPtr) + 1;
+      i = (b_qY - wPtr) + 1;
     }
-
-    if (n > 0) {
+    if (i > 0) {
       y_data[0] = wPtr;
       yk = wPtr;
-      for (i = 2; i <= n; i++) {
+      for (k = 2; k <= i; k++) {
         yk++;
-        y_data[i - 1] = yk;
+        y_data[k - 1] = yk;
       }
     }
-
-    yk = bc->size[0] * bc->size[1];
-    bc->size[0] = 1;
-    bc->size[1] = n;
-    emxEnsureCapacity_int32_T(bc, yk);
-    for (yk = 0; yk < n; yk++) {
-      bc->data[yk] = y_data[yk];
+    bc.set_size(1, i);
+    for (yk = 0; yk < i; yk++) {
+      bc[yk] = y_data[yk];
     }
-
-    if ((wPtr <= rPtr) && (rPtr <= c)) {
-      if ((c >= 0) && (rPtr < c - MAX_int32_T)) {
-        i = MAX_int32_T;
-      } else if ((c < 0) && (rPtr > c - MIN_int32_T)) {
-        i = MIN_int32_T;
+    if ((wPtr <= rPtr) && (rPtr <= b_qY)) {
+      if ((b_qY >= 0) && (rPtr < b_qY - MAX_int32_T)) {
+        b_qY = MAX_int32_T;
+      } else if ((b_qY < 0) && (rPtr > b_qY - MIN_int32_T)) {
+        b_qY = MIN_int32_T;
       } else {
-        i = c - rPtr;
+        b_qY -= rPtr;
       }
-
-      if (i > 2147483646) {
+      if (b_qY > 2147483646) {
         qY = MAX_int32_T;
       } else {
-        qY = i + 1;
+        qY = b_qY + 1;
       }
     }
   }
-
-  emxInit_int16_T(&r1, 1);
-  yk = r1->size[0];
-  r1->size[0] = bc->size[1];
-  emxEnsureCapacity_int16_T(r1, yk);
-  i = bc->size[1];
+  r.set_size(bc.size(1));
+  i = bc.size(1);
   for (yk = 0; yk < i; yk++) {
-    r1->data[yk] = (short)((short)bc->data[bc->size[0] * yk] - 1);
+    r[yk] = static_cast<short>(static_cast<short>(bc[yk]) - 1);
   }
-
-  emxFree_int32_T(&bc);
-  i = in->size[0];
+  i = in.size(0);
   for (yk = 0; yk < i; yk++) {
-    obj->Cache[r1->data[yk]] = in->data[yk];
+    pBuffer.Cache[r[yk]] = in[yk];
   }
-
-  emxFree_int16_T(&r1);
   if (c + 1 > 8194) {
     wPtr = 1;
   } else {
     wPtr = c + 1;
   }
-
   if (qY != 0) {
     rPtr = wPtr;
   }
-
-  i = obj->CumulativeOverrun;
+  i = pBuffer.CumulativeOverrun;
   if ((i < 0) && (qY < MIN_int32_T - i)) {
-    i = MIN_int32_T;
+    b_qY = MIN_int32_T;
   } else if ((i > 0) && (qY > MAX_int32_T - i)) {
-    i = MAX_int32_T;
+    b_qY = MAX_int32_T;
   } else {
-    i += qY;
+    b_qY = i + qY;
   }
-
-  obj->CumulativeOverrun = i;
-  obj->WritePointer = wPtr;
-  obj->ReadPointer = rPtr;
+  pBuffer.CumulativeOverrun = b_qY;
+  pBuffer.WritePointer = wPtr;
+  pBuffer.ReadPointer = rPtr;
 }
 
-//
-// File trailer for AsyncBuffer.cpp
-//
-// [EOF]
-//
+} // namespace dsp
+} // namespace coder
+
+// End of code generation (AsyncBuffer.cpp)

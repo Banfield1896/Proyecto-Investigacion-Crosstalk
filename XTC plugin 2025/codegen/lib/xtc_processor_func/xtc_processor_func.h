@@ -1,30 +1,29 @@
 //
-// File: xtc_processor_func.h
+// xtc_processor_func.h
 //
-// MATLAB Coder version            : 3.4
-// C/C++ source code generated on  : 07-Sep-2025 14:36:14
+// Code generation for function 'xtc_processor_func'
 //
+
 #ifndef XTC_PROCESSOR_FUNC_H
 #define XTC_PROCESSOR_FUNC_H
 
-// Include Files
-#include <cmath>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include "rt_nonfinite.h"
+// Include files
 #include "rtwtypes.h"
 #include "xtc_processor_func_types.h"
+#include "coder_array.h"
+#include <cstddef>
+#include <cstdlib>
 
 // Function Declarations
-extern void isInitialized_not_empty_init();
-extern void xtc_processor_func(const emxArray_real_T *in, const struct0_T
-  *params, emxArray_real_T *out);
+void isInitialized_not_empty_init();
+
+extern void xtc_processor_func(const coder::array<double, 2U> &in,
+                               const struct0_T *params,
+                               coder::array<double, 2U> &out);
+
+void xtc_processor_func_free();
+
+void xtc_processor_func_init();
 
 #endif
-
-//
-// File trailer for xtc_processor_func.h
-//
-// [EOF]
-//
+// End of code generation (xtc_processor_func.h)

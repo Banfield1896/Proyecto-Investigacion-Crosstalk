@@ -1,0 +1,30 @@
+function out = xtc_wrapper(in, params)
+% xtc_wrapper - A function wrapper for the XTC_Processor class.
+% This serves as a C-style entry-point for MATLAB Coder, holding the
+% stateful object in a persistent variable.
+
+%#codegen
+
+% Define a persistent variable to hold our processor object.
+% This variable will maintain its state across multiple calls.
+persistent processor_obj;
+
+% First-time initialization: if the object doesn't exist, create it.
+if isempty(processor_obj)
+    % Create an instance of our DSP class.
+    processor_obj = XTC_Processor();
+    % Set the initial sample rate from the parameters struct.
+    % This is done only once.
+    processor_obj.SampleRate = params.SampleRate;
+end
+
+% In every call, update the tunable parameters of the object.
+processor_obj.D = params.D;
+processor_obj.dp = params.dp;
+processor_obj.do = params.do;
+processor_obj.beta = params.beta;
+
+% Call the object's processing method (step) and return the output.
+out = step(processor_obj, in);
+
+end

@@ -1,0 +1,46 @@
+% generate_core_code.m
+% This script generates C++ code for the WRAPPER FUNCTION 'xtc_wrapper',
+% which internally uses the 'XTC_Processor' class.
+% This robust approach provides a clear function entry-point for Coder.
+
+% --- Configuration ---
+frameSize   = 512;      % Typical audio block size
+numChannels = 2;        % Stereo audio channels
+
+% 1. Define the type for the audio input ('in').
+% Defines 'in' as a matrix of doubles, with a variable number of rows
+% but always 2 columns.
+exampleInput = coder.typeof(zeros(frameSize, numChannels), [Inf, 2], [1, 0]);
+
+% 2. Define the type for the parameters struct ('params').
+% Creates a template struct so Coder knows the exact fields and types.
+paramStruct = struct(...
+    'D', 1.0, ...
+    'dp', 0.2, ...
+    'do', 0.18, ...
+    'beta', 0.01, ...
+    'SampleRate', 44100 ...
+);
+exampleParams = coder.typeof(paramStruct);
+
+% --- Code Generation Command ---
+cfg = coder.config('lib');
+cfg.TargetLang = 'C++';
+cfg.GenerateReport = true;
+
+% --- BULLETPROOF PATH CONFIGURATION ---
+% Get the absolute path to the folder containing THIS script.
+% This is more robust than '.' or 'pwd' as it's always correct.
+scriptPath = fileparts(mfilename('fullpath'));
+
+% Define the input arguments for the WRAPPER FUNCTION.
+args = {exampleInput, exampleParams};
+
+% Execute codegen on the WRAPPER FUNCTION.
+% We pass arguments as separate character vectors to avoid syntax errors
+% with string concatenation. This is the most robust method.
+disp('Iniciando la generación de código C++ para la función envoltorio...');
+codegen('-config', cfg, '-I', scriptPath, 'xtc_wrapper', '-args', args);
+
+disp('¡Generación de código completada!');
+disp('Revisa la carpeta "codegen/lib/xtc_wrapper" para ver los archivos C++.');
