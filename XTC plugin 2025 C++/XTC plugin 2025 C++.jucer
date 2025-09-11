@@ -4,6 +4,52 @@
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="qzgy6s" name="XTC plugin 2025 C++">
     <GROUP id="{E5F679CF-9A9C-81F7-A6AB-3202B649FAE5}" name="Source">
+      <FILE id="CDnP51" name="AsyncBuffer.cpp" compile="1" resource="0" file="Source/MATLAB/AsyncBuffer.cpp"/>
+      <FILE id="EiOGd0" name="AsyncBuffer.h" compile="0" resource="0" file="Source/MATLAB/AsyncBuffer.h"/>
+      <FILE id="b06tfm" name="AsyncBuffercgHelper.cpp" compile="1" resource="0"
+            file="Source/MATLAB/AsyncBuffercgHelper.cpp"/>
+      <FILE id="WPU2K0" name="AsyncBuffercgHelper.h" compile="0" resource="0"
+            file="Source/MATLAB/AsyncBuffercgHelper.h"/>
+      <FILE id="WGoOQe" name="cat.cpp" compile="1" resource="0" file="Source/MATLAB/cat.cpp"/>
+      <FILE id="l1Icvk" name="cat.h" compile="0" resource="0" file="Source/MATLAB/cat.h"/>
+      <FILE id="fr1F2T" name="circshift.cpp" compile="1" resource="0" file="Source/MATLAB/circshift.cpp"/>
+      <FILE id="EHRX5m" name="circshift.h" compile="0" resource="0" file="Source/MATLAB/circshift.h"/>
+      <FILE id="BGG2a9" name="coder_array.h" compile="0" resource="0" file="Source/MATLAB/coder_array.h"/>
+      <FILE id="WJ5vXX" name="FFTImplementationCallback.cpp" compile="1"
+            resource="0" file="Source/MATLAB/FFTImplementationCallback.cpp"/>
+      <FILE id="A9nSRp" name="FFTImplementationCallback.h" compile="0" resource="0"
+            file="Source/MATLAB/FFTImplementationCallback.h"/>
+      <FILE id="Pjk7vl" name="FrequencyDomainFIRFilter.cpp" compile="1" resource="0"
+            file="Source/MATLAB/FrequencyDomainFIRFilter.cpp" skipPCH="1"/>
+      <FILE id="CKEQnA" name="FrequencyDomainFIRFilter.h" compile="0" resource="0"
+            file="Source/MATLAB/FrequencyDomainFIRFilter.h"/>
+      <FILE id="b9rnL4" name="ifft.cpp" compile="1" resource="0" file="Source/MATLAB/ifft.cpp"/>
+      <FILE id="UVrMca" name="ifft.h" compile="0" resource="0" file="Source/MATLAB/ifft.h"/>
+      <FILE id="hcUdtF" name="NoPartitionOS.cpp" compile="1" resource="0"
+            file="Source/MATLAB/NoPartitionOS.cpp"/>
+      <FILE id="FewzJn" name="NoPartitionOS.h" compile="0" resource="0" file="Source/MATLAB/NoPartitionOS.h"/>
+      <FILE id="iBB4rh" name="rtwtypes.h" compile="0" resource="0" file="Source/MATLAB/rtwtypes.h"/>
+      <FILE id="wtDlF6" name="XTC_Processor.cpp" compile="1" resource="0"
+            file="Source/MATLAB/XTC_Processor.cpp"/>
+      <FILE id="wEiMvg" name="XTC_Processor.h" compile="0" resource="0" file="Source/MATLAB/XTC_Processor.h"/>
+      <FILE id="Ff7Vag" name="xtc_wrapper.cpp" compile="1" resource="0" file="Source/MATLAB/xtc_wrapper.cpp"/>
+      <FILE id="cyjPWt" name="xtc_wrapper.h" compile="0" resource="0" file="Source/MATLAB/xtc_wrapper.h"/>
+      <FILE id="isu2zD" name="xtc_wrapper_data.cpp" compile="1" resource="0"
+            file="Source/MATLAB/xtc_wrapper_data.cpp"/>
+      <FILE id="XzkVeu" name="xtc_wrapper_data.h" compile="0" resource="0"
+            file="Source/MATLAB/xtc_wrapper_data.h"/>
+      <FILE id="yjXYc3" name="xtc_wrapper_initialize.cpp" compile="1" resource="0"
+            file="Source/MATLAB/xtc_wrapper_initialize.cpp"/>
+      <FILE id="nboyV8" name="xtc_wrapper_initialize.h" compile="0" resource="0"
+            file="Source/MATLAB/xtc_wrapper_initialize.h"/>
+      <FILE id="DpIcG6" name="xtc_wrapper_internal_types.h" compile="0" resource="0"
+            file="Source/MATLAB/xtc_wrapper_internal_types.h"/>
+      <FILE id="HjVs8m" name="xtc_wrapper_terminate.cpp" compile="1" resource="0"
+            file="Source/MATLAB/xtc_wrapper_terminate.cpp"/>
+      <FILE id="kXXJP8" name="xtc_wrapper_terminate.h" compile="0" resource="0"
+            file="Source/MATLAB/xtc_wrapper_terminate.h"/>
+      <FILE id="WRjfG4" name="xtc_wrapper_types.h" compile="0" resource="0"
+            file="Source/MATLAB/xtc_wrapper_types.h"/>
       <FILE id="gylYnH" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="fuTGCY" name="PluginProcessor.h" compile="0" resource="0"
@@ -32,8 +78,8 @@
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="XTC plugin 2025 C++"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="XTC plugin 2025 C++"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="XTC plugin 2025 C++" headerPath="Source/MATLAB&#10;D:\Archivos de programa\MATLAB\R2021b\extern\include"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="XTC plugin 2025 C++" headerPath="Source/MATLAB&#10;D:\Archivos de programa\MATLAB\R2021b\extern\include"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE/modules"/>

@@ -22,10 +22,24 @@ XTCplugin2025CAudioProcessor::XTCplugin2025CAudioProcessor()
                        )
 #endif
 {
+    // 1. Inicializar la estructura de parámetros con valores por defecto
+    // al construir el plugin.
+    dspParameters.D = 1.0;
+    dspParameters.dp = 0.2;
+    dspParameters.b_do = 0.18;
+    dspParameters.beta = 0.01;
+    // La frecuencia de muestreo se establecerá en prepareToPlay.
+    dspParameters.SampleRate = 44100.0;
+
+    // Llamar a la función de inicialización generada por Coder.
+    // Esto prepara el estado persistente dentro del wrapper.
+    xtc_wrapper_initialize();
 }
 
 XTCplugin2025CAudioProcessor::~XTCplugin2025CAudioProcessor()
 {
+    // Llamar a la función de terminación para liberar recursos.
+    xtc_wrapper_terminate();
 }
 
 //==============================================================================
@@ -93,14 +107,18 @@ void XTCplugin2025CAudioProcessor::changeProgramName (int index, const juce::Str
 //==============================================================================
 void XTCplugin2025CAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    // Cuando el DAW informa la frecuencia de muestreo y el tamaño del bloque,
+    // simplemente actualizamos nuestra estructura de parámetros.
+    // El motor DSP de MATLAB se configurará automáticamente en la primera
+    // llamada a processBlock (step), usando este valor de SampleRate.
+    dspParameters.SampleRate = static_cast<double>(sampleRate);
 }
 
 void XTCplugin2025CAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+    // El motor DSP de MATLAB se limpia automáticamente cuando el objeto
+    // dspEngine es destruido (su destructor es llamado). No es necesario
+    // llamar a una función de terminación explícita.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -144,17 +162,35 @@ void XTCplugin2025CAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+    // --- BUCLE DE PROCESAMIENTO ---
 
-        // ..do something to the data...
+    const float* inputL = buffer.getReadPointer(0);
+    const float* inputR = (totalNumInputChannels > 1) ? buffer.getReadPointer(1) : nullptr;
+    float* outputL = buffer.getWritePointer(0);
+    float* outputR = (totalNumOutputChannels > 1) ? buffer.getWritePointer(1) : nullptr;
+    int numSamples = buffer.getNumSamples();
+
+    // 1. Convertir entrada de JUCE (float, separado) a MATLAB (double, intercalado)
+    std::vector<double> inputInterleaved(numSamples * 2);
+    for (int i = 0; i < numSamples; ++i)
+    {
+        inputInterleaved[i * 2] = static_cast<double>(inputL[i]);
+        if (inputR) inputInterleaved[i * 2 + 1] = static_cast<double>(inputR[i]);
+        else        inputInterleaved[i * 2 + 1] = static_cast<double>(inputL[i]);
+    }
+
+    coder::array<double, 2U> matlabInput;
+    matlabInput.set(inputInterleaved.data(), numSamples, 2);
+
+    // 2. Crear un array para la salida y LLAMAR A LA FUNCIÓN WRAPPER
+    coder::array<double, 2U> matlabOutput;
+    xtc_wrapper(matlabInput, &dspParameters, matlabOutput);
+
+    // 3. Convertir salida de MATLAB (double, intercalado) de vuelta a JUCE (float, separado)
+    for (int i = 0; i < numSamples; ++i)
+    {
+        outputL[i] = static_cast<float>(matlabOutput[i * 2]);
+        if (outputR) outputR[i] = static_cast<float>(matlabOutput[i * 2 + 1]);
     }
 }
 
