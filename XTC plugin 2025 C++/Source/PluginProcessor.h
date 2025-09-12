@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include "MATLAB/XTC_Processor.h"
 #include "MATLAB/xtc_wrapper_types.h"
 #include "MATLAB/xtc_wrapper.h"
@@ -17,14 +18,14 @@
 #include "MATLAB/rtwtypes.h"
 
 //==============================================================================
-/**
-*/
 class XTCplugin2025CAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
     XTCplugin2025CAudioProcessor();
     ~XTCplugin2025CAudioProcessor() override;
+
+    juce::AudioProcessorValueTreeState::ParameterLayout crearLayers();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -59,8 +60,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    juce::AudioProcessorValueTreeState APVTS;
+
 private:    
     struct0_T dspParameters;
+    static juce::AudioProcessorValueTreeState::ParameterLayout crearLayers();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XTCplugin2025CAudioProcessor)
 };

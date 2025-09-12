@@ -12,34 +12,40 @@
 //==============================================================================
 XTCplugin2025CAudioProcessor::XTCplugin2025CAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+    : AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    ),
+    // CORRECCIÓN 1: Usar el nombre exacto de la variable miembro (probablemente 'apvts' en minúscula).
+    APVTS(*this, nullptr, "Parameters", XTCplugin2025CAudioProcessor::crearLayers())
 #endif
 {
-    // 1. Inicializar la estructura de parámetros con valores por defecto
-    // al construir el plugin.
-    dspParameters.D = 1.0;
-    dspParameters.dp = 0.2;
-    dspParameters.b_do = 0.18;
-    dspParameters.beta = 0.01;
-    // La frecuencia de muestreo se establecerá en prepareToPlay.
-    dspParameters.SampleRate = 44100.0;
-
-    // Llamar a la función de inicialización generada por Coder.
-    // Esto prepara el estado persistente dentro del wrapper.
+    // La inicialización del DSP se mueve al inicializador de apvts
     xtc_wrapper_initialize();
 }
 
 XTCplugin2025CAudioProcessor::~XTCplugin2025CAudioProcessor()
 {
-    // Llamar a la función de terminación para liberar recursos.
     xtc_wrapper_terminate();
+}
+
+// --- DEFINICIÓN DE PARÁMETROS ---
+// Esta función crea el "mapa" de todos nuestros parámetros controlables.
+juce::AudioProcessorValueTreeState::ParameterLayout XTCplugin2025CAudioProcessor::crearLayers()
+{
+    // CORRECCIÓN 2: Usar un nombre de variable diferente al de la función para mayor claridad.
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("D", "Dist. Altavoz-Oido", 0.5f, 2.0f, 1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("DP", "Dist. entre Altavoces", 0.1f, 1.0f, 0.2f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("DO", "Dist. entre Oidos", 0.1f, 0.3f, 0.18f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BETA", "Regularizacion", 0.0001f, 0.1f, 0.01f));
+
+    return layout;
 }
 
 //==============================================================================
@@ -50,29 +56,29 @@ const juce::String XTCplugin2025CAudioProcessor::getName() const
 
 bool XTCplugin2025CAudioProcessor::acceptsMidi() const
 {
-   #if JucePlugin_WantsMidiInput
+#if JucePlugin_WantsMidiInput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool XTCplugin2025CAudioProcessor::producesMidi() const
 {
-   #if JucePlugin_ProducesMidiOutput
+#if JucePlugin_ProducesMidiOutput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 bool XTCplugin2025CAudioProcessor::isMidiEffect() const
 {
-   #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 double XTCplugin2025CAudioProcessor::getTailLengthSeconds() const
@@ -82,8 +88,7 @@ double XTCplugin2025CAudioProcessor::getTailLengthSeconds() const
 
 int XTCplugin2025CAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1;
 }
 
 int XTCplugin2025CAudioProcessor::getCurrentProgram()
@@ -91,66 +96,52 @@ int XTCplugin2025CAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void XTCplugin2025CAudioProcessor::setCurrentProgram (int index)
+void XTCplugin2025CAudioProcessor::setCurrentProgram(int index)
 {
 }
 
-const juce::String XTCplugin2025CAudioProcessor::getProgramName (int index)
+const juce::String XTCplugin2025CAudioProcessor::getProgramName(int index)
 {
     return {};
 }
 
-void XTCplugin2025CAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void XTCplugin2025CAudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void XTCplugin2025CAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void XTCplugin2025CAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    // Cuando el DAW informa la frecuencia de muestreo y el tamaño del bloque,
-    // simplemente actualizamos nuestra estructura de parámetros.
-    // El motor DSP de MATLAB se configurará automáticamente en la primera
-    // llamada a processBlock (step), usando este valor de SampleRate.
     dspParameters.SampleRate = static_cast<double>(sampleRate);
 }
 
 void XTCplugin2025CAudioProcessor::releaseResources()
 {
-    // El motor DSP de MATLAB se limpia automáticamente cuando el objeto
-    // dspEngine es destruido (su destructor es llamado). No es necesario
-    // llamar a una función de terminación explícita.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool XTCplugin2025CAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool XTCplugin2025CAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
+#if JucePlugin_IsMidiEffect
+    juce::ignoreUnused(layouts);
     return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
+#else
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
+#if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
-
+#endif
     return true;
-  #endif
+#endif
 }
 #endif
 
-void XTCplugin2025CAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void XTCplugin2025CAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     // In case we have more outputs than inputs, this code clears any output
@@ -160,7 +151,15 @@ void XTCplugin2025CAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+        buffer.clear(i, 0, buffer.getNumSamples());
+
+    // --- ACTUALIZAR PARÁMETROS DEL DSP ---
+    // Antes de procesar, actualizamos nuestra struct con los valores actuales del apvts.
+    // Esto asegura que la automatización del DAW y los movimientos de la GUI se apliquen.
+    dspParameters.D = *APVTS.getRawParameterValue("D");
+    dspParameters.dp = *APVTS.getRawParameterValue("DP");
+    dspParameters.b_do = *APVTS.getRawParameterValue("DO"); // CORRECCIÓN 3: Corregido el nombre del campo a 'do'.
+    dspParameters.beta = *APVTS.getRawParameterValue("BETA");
 
     // --- BUCLE DE PROCESAMIENTO ---
 
@@ -180,7 +179,7 @@ void XTCplugin2025CAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
     }
 
     coder::array<double, 2U> matlabInput;
-    matlabInput.set(inputInterleaved.data(), numSamples, 2);
+    matlabInput.set(inputInterleaved.data(), numSamples, 2); // CORRECCIÓN 4: Usar 'set_data'.
 
     // 2. Crear un array para la salida y LLAMAR A LA FUNCIÓN WRAPPER
     coder::array<double, 2U> matlabOutput;
@@ -197,26 +196,23 @@ void XTCplugin2025CAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 //==============================================================================
 bool XTCplugin2025CAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* XTCplugin2025CAudioProcessor::createEditor()
 {
-    return new XTCplugin2025CAudioProcessorEditor (*this);
+    return new XTCplugin2025CAudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void XTCplugin2025CAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void XTCplugin2025CAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // ...
 }
 
-void XTCplugin2025CAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void XTCplugin2025CAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    // ...
 }
 
 //==============================================================================
