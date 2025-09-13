@@ -60,13 +60,14 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    using ParameterState = juce::AudioProcessorValueTreeState;
-    ParameterState parameters;
+ ParameterState::ParameterLayout crearLayers();    
+
+    juce::AudioProcessorValueTreeState APVTS;
 
 private:    
     struct0_T dspParameters;
-    ParameterState::ParameterLayout crearLayers();
-    
+    static juce::AudioProcessorValueTreeState::ParameterLayout crearLayers();
     //==============================================================================
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XTCplugin2025CAudioProcessor)
 };
