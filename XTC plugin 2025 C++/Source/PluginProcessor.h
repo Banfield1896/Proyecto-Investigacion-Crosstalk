@@ -23,9 +23,7 @@ class XTCplugin2025CAudioProcessor  : public juce::AudioProcessor
 public:
     //==============================================================================
     XTCplugin2025CAudioProcessor();
-    ~XTCplugin2025CAudioProcessor() override;
-
-    juce::AudioProcessorValueTreeState::ParameterLayout crearLayers();
+    ~XTCplugin2025CAudioProcessor() override;    
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -59,8 +57,7 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-
- ParameterState::ParameterLayout crearLayers();    
+     
 
     juce::AudioProcessorValueTreeState APVTS;
 

@@ -34,6 +34,7 @@ XTCplugin2025CAudioProcessorEditor::XTCplugin2025CAudioProcessorEditor(XTCplugin
     }
 
     // --- CONECTAR SLIDERS A PARÁMETROS (LA MAGIA) ---
+    // Usamos el APVTS del procesador para crear las conexiones.
     dAttachment = std::make_unique<SliderAttachment>(audioProcessor.APVTS, "D", dSlider);
     dpAttachment = std::make_unique<SliderAttachment>(audioProcessor.APVTS, "DP", dpSlider);
     doAttachment = std::make_unique<SliderAttachment>(audioProcessor.APVTS, "DO", doSlider);
@@ -56,31 +57,38 @@ void XTCplugin2025CAudioProcessorEditor::paint(juce::Graphics& g)
 
 void XTCplugin2025CAudioProcessorEditor::resized()
 {
-    // Organizar los componentes en una fila horizontal
+    // Esta función define la posición y el tamaño de tus componentes.
+    // Usamos un FlexBox para organizarlos automáticamente en una fila.
+
     juce::FlexBox flexBox;
     flexBox.flexDirection = juce::FlexBox::Direction::row;
     flexBox.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     flexBox.alignItems = juce::FlexBox::AlignItems::center;
 
-    // Crear un "box" para cada par de etiqueta y slider
-    for (auto* slider : { &dSlider, &dpSlider, &doSlider, &betaSlider })
+    // Un "box" para cada par de etiqueta y slider
+    juce::FlexBox dBox, dpBox, doBox, betaBox;
+    for (auto* box : { &dBox, &dpBox, &doBox, &betaBox })
     {
-        juce::FlexBox itemBox;
-        itemBox.flexDirection = juce::FlexBox::Direction::column;
-        itemBox.alignItems = juce::FlexBox::AlignItems::center;
-
-        // Determinar qué etiqueta corresponde a cada slider
-        juce::Label* correspondingLabel = nullptr;
-        if (slider == &dSlider) correspondingLabel = &dLabel;
-        if (slider == &dpSlider) correspondingLabel = &dpLabel;
-        if (slider == &doSlider) correspondingLabel = &doLabel;
-        if (slider == &betaSlider) correspondingLabel = &betaLabel;
-
-        itemBox.items.add(juce::FlexItem(*correspondingLabel).withHeight(20.0f).withWidth(100.0f));
-        itemBox.items.add(juce::FlexItem(*slider).withHeight(100.0f).withWidth(100.0f));
-
-        flexBox.items.add(juce::FlexItem(itemBox).withFlex(1.0f));
+        box->flexDirection = juce::FlexBox::Direction::column;
+        box->alignItems = juce::FlexBox::AlignItems::center;
     }
 
-    flexBox.performLayout(getLocalBounds().toFloat());
+    dBox.items.add(juce::FlexItem(dLabel).withHeight(20.0f).withWidth(120.0f));
+    dBox.items.add(juce::FlexItem(dSlider).withHeight(100.0f).withWidth(100.0f));
+
+    dpBox.items.add(juce::FlexItem(dpLabel).withHeight(20.0f).withWidth(120.0f));
+    dpBox.items.add(juce::FlexItem(dpSlider).withHeight(100.0f).withWidth(100.0f));
+
+    doBox.items.add(juce::FlexItem(doLabel).withHeight(20.0f).withWidth(120.0f));
+    doBox.items.add(juce::FlexItem(doSlider).withHeight(100.0f).withWidth(100.0f));
+
+    betaBox.items.add(juce::FlexItem(betaLabel).withHeight(20.0f).withWidth(120.0f));
+    betaBox.items.add(juce::FlexItem(betaSlider).withHeight(100.0f).withWidth(100.0f));
+
+    flexBox.items.add(juce::FlexItem(dBox).withFlex(1.0f));
+    flexBox.items.add(juce::FlexItem(dpBox).withFlex(1.0f));
+    flexBox.items.add(juce::FlexItem(doBox).withFlex(1.0f));
+    flexBox.items.add(juce::FlexItem(betaBox).withFlex(1.0f));
+
+    flexBox.performLayout(getLocalBounds().reduced(10).toFloat());
 }

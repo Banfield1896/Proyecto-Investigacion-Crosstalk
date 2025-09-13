@@ -20,18 +20,13 @@ XTCplugin2025CAudioProcessor::XTCplugin2025CAudioProcessor()
         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
     ),
-<<<<<<< HEAD
-    // La llamada explícita y correcta a la función estática.
-    parameters(*this, nullptr, "Parameters", XTCplugin2025CAudioProcessor::crearLayers())
-#endif
-{
-=======
+
     // CORRECCIÓN 1: Usar el nombre exacto de la variable miembro (probablemente 'apvts' en minúscula).
     APVTS(*this, nullptr, "Parameters", XTCplugin2025CAudioProcessor::crearLayers())
+
 #endif
 {
     // La inicialización del DSP se mueve al inicializador de apvts
->>>>>>> 7cceda2d42f0ceb17c138bbbed175eda7a423669
     xtc_wrapper_initialize();
 }
 
@@ -45,14 +40,13 @@ XTCplugin2025CAudioProcessor::~XTCplugin2025CAudioProcessor()
 juce::AudioProcessorValueTreeState::ParameterLayout XTCplugin2025CAudioProcessor::crearLayers()
 {
     // CORRECCIÓN 2: Usar un nombre de variable diferente al de la función para mayor claridad.
-    juce::AudioProcessorValueTreeState::ParameterLayout layout;
-
-    layout.add(std::make_unique<juce::AudioParameterFloat>("D", "Dist. Altavoz-Oido", 0.5f, 2.0f, 1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("DP", "Dist. entre Altavoces", 0.1f, 1.0f, 0.2f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("DO", "Dist. entre Oidos", 0.1f, 0.3f, 0.18f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("BETA", "Regularizacion", 0.0001f, 0.1f, 0.01f));
-
-    return layout;
+    
+    return {
+            std::make_unique<juce::AudioParameterFloat>("D",    "Dist. Altavoz-Oido", 0.5f, 2.0f, 1.0f),
+            std::make_unique<juce::AudioParameterFloat>("DP",   "Dist. entre Altavoces", 0.1f, 1.0f, 0.2f),
+            std::make_unique<juce::AudioParameterFloat>("DO",   "Dist. entre Oidos", 0.1f, 0.3f, 0.18f),
+            std::make_unique<juce::AudioParameterFloat>("BETA", "Regularizacion", 0.0001f, 0.1f, 0.01f)
+    };
 }
 
 //==============================================================================
