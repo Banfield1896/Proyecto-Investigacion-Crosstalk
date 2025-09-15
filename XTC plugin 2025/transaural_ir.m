@@ -1,18 +1,24 @@
 function [cLL, cLR] = transaural_ir(D, dp, do, beta, nSamplesIR, fs)
-% Versión corregida y optimizada para la generación de código C++.
-% - Pre-asigna memoria para todas las matrices.
-% - Devuelve únicamente las dos IRs necesarias (cLL y cLR).
-
+% Calcula las respuestas al impulso de cancelación de crosstalk
+% La c minúscula se utiliza aquí para funciones del tiempo
+% La C mayúscula para funciones de la frecuencia
+% D es la distancia del plano de altavoces al plano oídos
+% dp es la distancia entre altavoces
+% do es la distancia entre oídos
+% beta es el coeficiente de regulación
+% nSamplesIR es la cant de muestras de las rtas al impulso
+% fs es la frecuencia de muestreo
+% C es la matriz de cancelación de crosstalk
+% --- Caso simétrico sin reflexiones en la cabeza
 % --- Pre-asignación de memoria ---
-% Esto le dice a MATLAB Coder el tamaño exacto de las matrices de antemano.
+% Es lo mas eficiente y resulta necesario para pasar el codigo a C++ en el
+% futuro
 C = complex(zeros(2, 2, nSamplesIR/2));
 % H no es necesario si no se devuelve H2.
 % C2 y H2 tampoco son necesarios si no se devuelven.
 
 c = 345;
-if mod(nSamplesIR, 2) == 1 
-    nSamplesIR = nSamplesIR + 1;
-end
+
 f = (0:nSamplesIR/2-1) / nSamplesIR * fs;
 
 dLL = sqrt(D^2 + (dp/2 - do/2)^2);
@@ -28,7 +34,7 @@ for naux = 1:nSamplesIR/2
     C(:,:,naux) = inv((Haux0' * Haux0 + beta * eye(2))) * Haux0';
 end
 
-% Reconstrucción del espectro completo con simetría Hermitiana
+% Reconstrucción del espectro completo
 CLL_spec = [squeeze(C(1,1,:)); 0; conj(squeeze(C(1,1,end:-1:2)))];
 CLR_spec = [squeeze(C(2,1,:)); 0; conj(squeeze(C(2,1,end:-1:2)))];
 
