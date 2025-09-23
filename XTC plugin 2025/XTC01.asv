@@ -16,10 +16,6 @@ classdef XTC01 < audioPlugin & matlab.System
 
     properties (Constant)
         PluginInterface = audioPluginInterface(...
-            audioPluginParameter('D', 'DisplayName', 'Distancia Altavoces-Oídos (m)', 'Mapping', {'lin', 0.5, 2}), ...
-            audioPluginParameter('dp', 'DisplayName', 'Distancia entre Altavoces (m)', 'Mapping', {'lin', 0.1, 1}), ...
-            audioPluginParameter('do', 'DisplayName', 'Distancia entre Oídos (m)', 'Mapping', {'lin', 0.1, 0.3}), ...
-            audioPluginParameter('beta', 'DisplayName', 'Regularización ?', 'Mapping', {'log', 1e-4, 1e-1}),...
             'InputChannels',2,... % Stereo input
             'OutputChannels',2,... % Stereo output
             'PluginName','CrosstalkConvolver'...
@@ -58,8 +54,8 @@ classdef XTC01 < audioPlugin & matlab.System
             [cLL, cLR] = transaural_ir(plugin.D, plugin.dp, plugin.do,...
                 plugin.beta, plugin.nSamplesIR, fs);
 
-            cRR = cLL;
-            cRL = cLR;
+            cLL=cRR;
+            cLR=cRL;
 
             % Validate impulse response dimensions
             if size(plugin.ImpulseResponse, 1) ~= 2
@@ -111,7 +107,7 @@ classdef XTC01 < audioPlugin & matlab.System
             plugin.pFIR_hL_xL.Numerator = cLL;
             plugin.pFIR_hLR_xR.Numerator = cLR;
             plugin.pFIR_hRL_xL.Numerator = cRL;
-            plugin.pFIR_hR_xR.Numerator = cRR;
+            
         end
 
         % Propagators (remain the same as they handle size and type based on input)
