@@ -1,4 +1,4 @@
-classdef XTC01 < audioPlugin & matlab.System
+classdef XTC08 < audioPlugin & matlab.System
     properties
         D = 1.0;
         dp = 0.2;
@@ -62,28 +62,28 @@ classdef XTC01 < audioPlugin & matlab.System
             cRL = cLR;
 
             % Validate impulse response dimensions
-            if size(plugin.ImpulseResponse, 1) ~= 2
-                error('The ImpulseResponseDirect must be a stereo (2-channel) audio file.');
-            end
+            %if size(plugin.ImpulseResponse, 1) ~= 2
+            %    error('The ImpulseResponseDirect must be a stereo (2-channel) audio file.');
+            %end
 
             % Initialize all four FIR filters
             plugin.pFIR_hL_xL = dsp.FrequencyDomainFIRFilter(...
-                'Numerator', cLL, ... % hL
+                'Numerator', cLL.', ... % hL
                 'PartitionForReducedLatency', true, 'PartitionLength', plugin.PartitionSize);
             setup(plugin.pFIR_hL_xL, u(:,1)); % Setup with left input
 
             plugin.pFIR_hLR_xR = dsp.FrequencyDomainFIRFilter(...
-                'Numerator', cLR, ... % hLR
+                'Numerator', cLR.', ... % hLR
                 'PartitionForReducedLatency', true, 'PartitionLength', plugin.PartitionSize);
             setup(plugin.pFIR_hLR_xR, u(:,2)); % Setup with right input
 
             plugin.pFIR_hRL_xL = dsp.FrequencyDomainFIRFilter(...
-                'Numerator', cRL, ... % hRL
+                'Numerator', cRL.', ... % hRL
                 'PartitionForReducedLatency', true, 'PartitionLength', plugin.PartitionSize);
             setup(plugin.pFIR_hRL_xL, u(:,1)); % Setup with left input
 
             plugin.pFIR_hR_xR = dsp.FrequencyDomainFIRFilter(...
-                'Numerator', cRR, ... % hR
+                'Numerator', cRR.', ... % hR
                 'PartitionForReducedLatency', true, 'PartitionLength', plugin.PartitionSize);
             setup(plugin.pFIR_hR_xR, u(:,2)); % Setup with right input
         end
@@ -108,10 +108,10 @@ classdef XTC01 < audioPlugin & matlab.System
             cRL = cLR;
     
             % Actualizamos la propiedad 'Numerator' de los filtros existentes
-            plugin.pFIR_hL_xL.Numerator = cLL;
-            plugin.pFIR_hLR_xR.Numerator = cLR;
-            plugin.pFIR_hRL_xL.Numerator = cRL;
-            plugin.pFIR_hR_xR.Numerator = cRR;
+            plugin.pFIR_hL_xL.Numerator = cLL.';
+            plugin.pFIR_hLR_xR.Numerator = cLR.';
+            plugin.pFIR_hRL_xL.Numerator = cRL.';
+            plugin.pFIR_hR_xR.Numerator = cRR.';
         end
 
         % Propagators (remain the same as they handle size and type based on input)
